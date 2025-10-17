@@ -39,4 +39,16 @@ public class Room {
     public List<Item> getItems() {
         return this.items;
     }
+
+    public void addItem(Item item) {
+        if (item == null)
+            throw new IllegalArgumentException("Cannot add a null item to the room.");
+        this.items.add(item);
+    }
+
+    public void removeItem(Item item) {
+        if (item == null)
+            throw new IllegalArgumentException("Cannot remove a null item from the room.");
+        this.items.remove(item);
+    }
 }
