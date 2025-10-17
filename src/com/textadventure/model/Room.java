@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.textadventure.model.Item;
-
 public class Room {
     private String name;
     private String description;
@@ -16,8 +14,10 @@ public class Room {
     public Room(String name, String description) {
         if (name == null || name.trim().isEmpty())
             throw new IllegalArgumentException("Room name cannot be null or empty");
+
         if (description == null)
             throw new IllegalArgumentException("Room description cannot be null");
+
         this.name = name.trim();
         this.description = description;
         this.exits = new HashMap<>();
@@ -49,6 +49,7 @@ public class Room {
     public void removeItem(Item item) {
         if (item == null)
             throw new IllegalArgumentException("Cannot remove a null item from the room.");
+
         this.items.remove(item);
     }
 

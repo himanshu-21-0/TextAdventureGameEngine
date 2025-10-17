@@ -7,8 +7,10 @@ public class Item {
     public Item(String name, String description) {
         if (name == null || name.trim().isEmpty())
             throw new IllegalArgumentException("Item name cannot be null or empty.");
+
         if (description == null)
             throw new IllegalArgumentException("Item description cannot be null.");
+        
         this.name = name;
         this.description = description;
     }
