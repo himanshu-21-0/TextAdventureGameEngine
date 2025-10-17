@@ -25,18 +25,18 @@ public class Room {
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public String getDescription() {
-        return description;
+        return this.description;
     }
 
     public Map<String, String> getExits() {
-        return exits;
+        return this.exits;
     }
 
     public List<Item> getItems() {
-        return items;
+        return this.items;
     }
 }
