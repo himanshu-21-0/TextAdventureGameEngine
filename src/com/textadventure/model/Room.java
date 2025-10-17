@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
+import com.textadventure.model.Item;
 
 public class Room {
     private String name;
@@ -15,5 +16,6 @@ public class Room {
         this.name = name;
         this.description = description;
         this.exits = new HashMap<>();
+        this.items = new ArrayList<>();
     }
 }
