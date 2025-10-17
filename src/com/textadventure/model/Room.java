@@ -18,7 +18,7 @@ public class Room {
             throw new IllegalArgumentException("Room name cannot be null or empty");
         if (description == null)
             throw new IllegalArgumentException("Room description cannot be null");
-        this.name = name;
+        this.name = name.trim();
         this.description = description;
         this.exits = new HashMap<>();
         this.items = new ArrayList<>();
