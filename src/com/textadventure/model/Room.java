@@ -23,4 +23,20 @@ public class Room {
         this.exits = new HashMap<>();
         this.items = new ArrayList<>();
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public Map<String, String> getExits() {
+        return exits;
+    }
+
+    public List<Item> getItems() {
+        return items;
+    }
 }
