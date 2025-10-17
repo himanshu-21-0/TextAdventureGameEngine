@@ -7,5 +7,11 @@ public class Room {
     private String name;
     private String description;
 
-    private Map<String,String> exits;
+    private Map<String, String> exits;
+
+    public Room(String name, String description) {
+        this.name = name;
+        this.description = description;
+        this.exits = new HashMap<>();
+    }
 }
