@@ -51,4 +51,17 @@ public class Room {
             throw new IllegalArgumentException("Cannot remove a null item from the room.");
         this.items.remove(item);
     }
+
+    public void addExit(String direction, String destinationRoomName) {
+        if (direction == null || direction.trim().isEmpty())
+            throw new IllegalArgumentException("Exit direction cammot be null or empty");
+
+        if (destinationRoomName == null || destinationRoomName.trim().isEmpty())
+            throw new IllegalArgumentException("Exit destination room name cannot be null or empty");
+
+        String normalizedDirection = direction.trim().toLowerCase();
+        String trimmedDestination = destinationRoomName.trim();
+
+        this.exits.put(normalizedDirection, trimmedDestination);
+    }
 }
