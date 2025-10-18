@@ -34,4 +34,8 @@ public class Player {
     public List<Item> getInventory() {
         return this.inventory;
     }
+
+    public String getCurrentRoomName() {
+        return this.currentRoomName;
+    }
 }
