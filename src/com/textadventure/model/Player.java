@@ -16,10 +16,18 @@ public class Player {
     }
 
     public void takeItem(Item item) {
-        inventory.add(item);
+        if (item == null)
+            throw new IllegalArgumentException("Cannot add a null item to player inventory.");
+
+        this.inventory.add(item);
     }
 
-    public void dropItem(Item item) {
-        inventory.remove(item);
+    public boolean dropItem(Item item) {
+        if (item == null)
+            throw new IllegalArgumentException("Cannot drop null item from player inventory.");
+
+        boolean removed = this.inventory.remove(item);
+
+        return removed;
     }
 }
