@@ -27,7 +27,6 @@ public class Player {
             throw new IllegalArgumentException("Cannot drop null item from player inventory.");
 
         boolean removed = this.inventory.remove(item);
-
         return removed;
     }
 
@@ -37,5 +36,12 @@ public class Player {
 
     public String getCurrentRoomName() {
         return this.currentRoomName;
+    }
+
+    public void setCurrentRoomName(String newRoomName) {
+        if (newRoomName == null || newRoomName.trim().isEmpty())
+            throw new IllegalArgumentException("Cannot set current room name to null or empty.");
+
+        this.currentRoomName = newRoomName.trim();
     }
 }
