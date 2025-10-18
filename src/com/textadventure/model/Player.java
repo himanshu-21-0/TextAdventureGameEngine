@@ -7,4 +7,8 @@ public class Player {
     private String currentRoomName;
     private String currentRoom;
     private List<Item> inventory;
+
+    public Player() {
+        this.inventory = new ArrayList<>();
+    }
 }
