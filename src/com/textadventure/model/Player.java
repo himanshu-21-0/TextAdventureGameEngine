@@ -14,4 +14,12 @@ public class Player {
         this.currentRoomName = startingRoomName.trim();
         this.inventory = new ArrayList<>();
     }
+
+    public void takeItem(Item item) {
+        inventory.add(item);
+    }
+
+    public void dropItem(Item item) {
+        inventory.remove(item);
+    }
 }
