@@ -30,4 +30,8 @@ public class Player {
 
         return removed;
     }
+
+    public List<Item> getInventory() {
+        return this.inventory;
+    }
 }
