@@ -5,10 +5,13 @@ import java.util.ArrayList;
 
 public class Player {
     private String currentRoomName;
-    private String currentRoom;
     private List<Item> inventory;
 
-    public Player() {
+    public Player(String startingRoomName) {
+        if (startingRoomName == null || startingRoomName.trim().isEmpty())
+            throw new IllegalArgumentException("Player starting room cannot be null or empty");
+
+        this.currentRoomName = startingRoomName.trim();
         this.inventory = new ArrayList<>();
     }
 }
