@@ -1,5 +1,42 @@
 {
-  "playerStart": "Cave Entrance",
-  "items": [],
-  "rooms": []
+  "playerStart": "Forest Clearing",
+
+  "items": [
+    {
+      "name": "shiny stone",
+      "description": "A smooth, grey stone that catches the light in an interesting way."
+    },
+    {
+      "name": "old map",
+      "description": "A brittle piece of parchment with crude drawings. It seems to depict a series of caves."
+    }
+  ],
+
+  "rooms": [
+    {
+      "name": "Forest Clearing",
+      "description": "You are in a small clearing surrounded by tall trees. Sunlight dapples through the leaves. To the east, you see the dark mouth of a cave.",
+      "exits": {
+        "east": "Cave Entrance"
+      },
+      "items": ["shiny stone"]
+    },
+    {
+      "name": "Cave Entrance",
+      "description": "You stand at the entrance of a dark, damp cave. A chill wind blows from within. The clearing is back to the west, and a narrow tunnel leads north.",
+      "exits": {
+        "west": "Forest Clearing",
+        "north": "Dark Tunnel"
+      },
+      "items": []
+    },
+    {
+      "name": "Dark Tunnel",
+      "description": "It's much darker here in this narrow tunnel. Water drips steadily from the ceiling. You can barely make out the cave entrance to the south. Something lies on the ground here.",
+      "exits": {
+        "south": "Cave Entrance"
+      },
+      "items": ["old map"]
+    }
+  ]
 }
