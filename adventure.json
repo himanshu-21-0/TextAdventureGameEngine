@@ -9,21 +9,55 @@
     {
       "name": "old map",
       "description": "A brittle piece of parchment with crude drawings. It seems to depict a series of caves."
+    },
+    {
+      "name": "rusty key",
+      "description": "A corroded iron key. It looks ancient and fragile."
+    },
+    {
+      "name": "silver sword",
+      "description": "A sharp sword with a silver blade, engraved with strange runes."
+    },
+    {
+      "name": "torch",
+      "description": "A wooden torch that can be lit to illuminate dark places."
+    },
+    {
+      "name": "golden crown",
+      "description": "An ornate crown studded with jewels. It must be incredibly valuable."
+    },
+    {
+      "name": "health potion",
+      "description": "A small red vial that restores your vitality when consumed."
+    },
+    {
+      "name": "ancient tome",
+      "description": "A dusty old book filled with cryptic symbols and magical incantations."
+    },
+    {
+      "name": "fishing rod",
+      "description": "A sturdy rod perfect for catching fish in calm waters."
+    },
+    {
+      "name": "rope",
+      "description": "A long, thick rope. It might help you climb or descend somewhere dangerous."
     }
   ],
 
   "rooms": [
     {
       "name": "Forest Clearing",
-      "description": "You are in a small clearing surrounded by tall trees. Sunlight dapples through the leaves. To the east, you see the dark mouth of a cave.",
+      "description": "You are in a sunny clearing surrounded by tall trees. A narrow trail leads north to a small village. To the east, you see the dark mouth of a cave. A path south leads to a quiet lake.",
       "exits": {
-        "east": "Cave Entrance"
+        "north": "Village Outskirts",
+        "east": "Cave Entrance",
+        "south": "Lakeside"
       },
-      "items": ["shiny stone"]
+      "items": ["shiny stone", "torch"]
     },
     {
       "name": "Cave Entrance",
-      "description": "You stand at the entrance of a dark, damp cave. A chill wind blows from within. The clearing is back to the west, and a narrow tunnel leads north.",
+      "description": "You stand before the gaping maw of a cave. A chill wind blows from within. The forest lies to the west, and a narrow tunnel leads deeper north.",
       "exits": {
         "west": "Forest Clearing",
         "north": "Dark Tunnel"
@@ -32,11 +66,115 @@
     },
     {
       "name": "Dark Tunnel",
-      "description": "It's much darker here in this narrow tunnel. Water drips steadily from the ceiling. You can barely make out the cave entrance to the south. Something lies on the ground here.",
+      "description": "The tunnel is pitch black and damp. You hear faint dripping. A faint glow lies ahead to the north. The cave entrance is back to the south.",
       "exits": {
-        "south": "Cave Entrance"
+        "south": "Cave Entrance",
+        "north": "Underground Chamber"
       },
       "items": ["old map"]
+    },
+    {
+      "name": "Underground Chamber",
+      "description": "A wide chamber with moss-covered walls. A locked door stands to the east, and a collapsed passage lies to the west. You can go back south into the tunnel.",
+      "exits": {
+        "south": "Dark Tunnel",
+        "east": "Hidden Vault"
+      },
+      "items": ["rusty key"]
+    },
+    {
+      "name": "Hidden Vault",
+      "description": "A secret stone vault glimmers with faint torchlight. Ancient chests line the walls. You sense danger. The only exit is west.",
+      "exits": {
+        "west": "Underground Chamber"
+      },
+      "items": ["golden crown", "ancient tome"]
+    },
+    {
+      "name": "Village Outskirts",
+      "description": "You arrive at the outskirts of a small, peaceful village. Farmers work in nearby fields. Paths lead south back to the forest and east into the market.",
+      "exits": {
+        "south": "Forest Clearing",
+        "east": "Village Market"
+      },
+      "items": ["health potion"]
+    },
+    {
+      "name": "Village Market",
+      "description": "Bustling stalls line the road. Merchants shout, and the smell of food fills the air. The blacksmith’s forge is to the north.",
+      "exits": {
+        "west": "Village Outskirts",
+        "north": "Blacksmith Forge"
+      },
+      "items": []
+    },
+    {
+      "name": "Blacksmith Forge",
+      "description": "The forge burns brightly. Tools hang neatly on the walls. A half-finished sword rests on the anvil. To the south is the market.",
+      "exits": {
+        "south": "Village Market"
+      },
+      "items": ["silver sword"]
+    },
+    {
+      "name": "Lakeside",
+      "description": "You reach a calm, sparkling lake. Ducks glide across the water. A small boat is tied to a post. Paths lead north to the forest and east to the ruins.",
+      "exits": {
+        "north": "Forest Clearing",
+        "east": "Ancient Ruins"
+      },
+      "items": ["fishing rod"]
+    },
+    {
+      "name": "Ancient Ruins",
+      "description": "Crumbling pillars and overgrown stones mark the site of an ancient temple. There’s a staircase leading down into darkness.",
+      "exits": {
+        "west": "Lakeside",
+        "down": "Sunken Catacombs"
+      },
+      "items": ["rope"]
+    },
+    {
+      "name": "Sunken Catacombs",
+      "description": "You find yourself in damp, torch-lit tunnels beneath the ruins. The air is thick and heavy. A narrow path leads up, and a doorway lies east.",
+      "exits": {
+        "up": "Ancient Ruins",
+        "east": "Forgotten Shrine"
+      },
+      "items": []
+    },
+    {
+      "name": "Forgotten Shrine",
+      "description": "An eerie shrine filled with flickering candles and ancient idols. A faint hum fills the air. The only exit is west.",
+      "exits": {
+        "west": "Sunken Catacombs"
+      },
+      "items": ["silver sword"]
+    },
+    {
+      "name": "Wizard Tower Base",
+      "description": "A tall, crumbling tower looms above you. The entrance door is unlocked. A winding staircase spirals upward.",
+      "exits": {
+        "up": "Wizard Tower Library"
+      },
+      "items": []
+    },
+    {
+      "name": "Wizard Tower Library",
+      "description": "The circular room is filled with dusty books and magical artifacts. The air crackles with energy. A ladder leads up to the observatory.",
+      "exits": {
+        "down": "Wizard Tower Base",
+        "up": "Observatory"
+      },
+      "items": ["ancient tome"]
+    },
+    {
+      "name": "Observatory",
+      "description": "At the top of the tower, stars twinkle through shattered glass panels. Strange mechanisms point toward the heavens. The way down leads back to the library.",
+      "exits": {
+        "down": "Wizard Tower Library"
+      },
+      "items": ["golden crown"]
     }
   ]
 }
