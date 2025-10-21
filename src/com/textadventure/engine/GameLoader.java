@@ -11,6 +11,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+
 public class GameLoader {
     private Map<String, Room> loadedRooms;
     private Map<String, Item> loadedItems;
