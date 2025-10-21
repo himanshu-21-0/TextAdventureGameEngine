@@ -20,6 +20,9 @@ public class GameLoader {
     }
 
     public void loadGameData(String filePath) throws IOException {
+        if (filePath == null || filePath.trim().isEmpty())
+            throw new IllegalArgumentException("Filepath cannot be null or empty");
+
         System.out.println("Attempting to load game data from: " + filePath);
         System.err.println("Game data loading process initiated (implementation pending).");
     }
