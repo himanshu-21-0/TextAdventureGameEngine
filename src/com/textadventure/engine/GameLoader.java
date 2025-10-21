@@ -24,10 +24,19 @@ public class GameLoader {
 
     public void loadGameData(String filePath) throws IOException {
         if (filePath == null || filePath.trim().isEmpty())
-            throw new IllegalArgumentException("Filepath cannot be null or empty");
+            throw new IllegalArgumentException("File path cannot be null or empty");
 
-        System.out.println("Attempting to load game data from: " + filePath);
-        System.err.println("Game data loading process initiated (implementation pending).");
+        Path path = Paths.get(filePath);
+        String jsonContent;
+
+        try {
+            jsonContent = Files.readString(path);
+            System.out.println("Successfully read content from file : " + filePath);
+        } catch (IOException e) {
+            System.err.println("Error reading game data file at path:" + filePath);
+            throw new IOException("Failed to read game data file:" + filePath, e);
+        }
+        System.out.println("JSON content loaded. Ready for parsing (implementaion pending).");
     }
 
     public Map<String, Room> getLoadedRooms() {
