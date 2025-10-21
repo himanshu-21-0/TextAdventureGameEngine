@@ -62,8 +62,9 @@ public class GameLoader {
             jsonContent = Files.readString(path);
             System.out.println("Successfully read content from file : " + filePath);
         } catch (IOException e) {
-            System.err.println("Error reading game data file at path:" + filePath);
-            throw new IOException("Failed to read game data file:" + filePath, e);
+            System.err.println("ERROR: Failed to read game data file at path: " + filePath);
+            System.err.println("Reason: " + e.getClass().getSimpleName() + " - " + e.getMessage());
+            throw new IOException("Failed to read game data file: '" + filePath + "'. Check file existence and permissions.", e);
         }
 
         GameData gameData;
