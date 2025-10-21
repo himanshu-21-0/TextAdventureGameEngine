@@ -113,7 +113,7 @@ public class GameLoader {
             }
             String itemDesc = (itemData.description != null) ? itemData.description : "An item.";
             Item newItem = new Item(itemName, itemDesc);
-            loadedItems.put(itemDesc, newItem);
+            loadedItems.put(itemName, newItem);
             System.out.println("Created Item: " + itemName);
         }
         for (RoomData roomData : gameData.rooms) {
