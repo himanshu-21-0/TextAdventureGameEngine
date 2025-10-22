@@ -6,5 +6,5 @@ import com.textadventure.model.Player;
 import com.textadventure.engine.GameLoader;
 
 public class Game {
-
+    
 }
