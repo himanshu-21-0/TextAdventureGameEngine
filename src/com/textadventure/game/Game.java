@@ -4,6 +4,10 @@ import com.textadventure.model.Room;
 import com.textadventure.model.Player;
 import com.textadventure.engine.GameLoader;
 
-public class Game {
+import java.util.Map;
 
+public class Game {
+    public Game() {
+        System.out.println("Game object created. Ready for initialization.");
+    }
 }
