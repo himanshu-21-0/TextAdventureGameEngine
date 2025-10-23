@@ -41,7 +41,7 @@ public class Game {
             throw new GameDataException("Initialization failed: Starting room name '" + startRoomName
                     + "' provided by loader, but not found in loaded rooms map");
 
-        this.player = new Player();
+        this.player = new Player(startRoomName);
         this.player.setCurrentRoomName(startRoomName);
 
         System.out.println("[Initialize] Player object created.");
