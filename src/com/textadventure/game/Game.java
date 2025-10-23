@@ -45,10 +45,22 @@ public class Game {
 
         System.out.println("[Initialize] Creating the Player object...");
         this.player = new Player();
-
         System.out.println("[Initialize] Player object created successfully.");
 
-        System.out.println("[Initialize] Next step: Determine and set player's starting location...");
+        System.out.println("[Initialize] Retrieving player start room name from GameLoader...");
+        String startRoomName = gameLoader.getPlayerStartRoomName();
+
+        if (startRoomName == null || !this.rooms.containsKey(startRoomName))
+            throw new GameDataException("Initialization failed: Player starting room '" + startRoomName +
+                    "' (specified in JSON) does not correspond to any loaded room. Check JSON data integrity.");
+        System.out.println("[Initialize] Start room name '" + startRoomName + "' confirmed to exist in loaded rooms.");
+
+        this.player.setCurrentRoomName(startRoomName);
+        System.out.println("[Initialize] Player's current room set to: '" + this.player.getCurrentRoomName() + "'");
+
+        System.out.println("----------------------------------------");
+        System.out.println("Game initialization complete!");
+        System.out.println("Player is ready at location: " + this.player.getCurrentRoomName());
         System.out.println("----------------------------------------");
     }
 }
