@@ -20,34 +20,29 @@ public class Game {
         System.out.println("Game object created. Ready for initialization.");
     }
 
-    public void initialize(String dataFilePath) throws IOException, JsonSyntaxException, GameDataException, IllegalArgumentException {
+    public void initialize(String dataFilePath)
+            throws IOException, JsonSyntaxException, GameDataException, IllegalArgumentException {
         System.out.println("----------------------------------------");
         System.out.println("Initializing game from data file: " + dataFilePath + "...");
         System.out.println("----------------------------------------");
 
+        System.out.println("[Initialize] Calling GameLoader.loadGameData()...");
         gameLoader.loadGameData(dataFilePath);
         System.out.println("[Initialize] Game data loaded successfully by GameLoader.");
+        System.out.println("----------------------------------------");
 
-        this.rooms = gameLoader.getLoadedRooms();
+        System.out.println("[Initialize] Retrieving loaded rooms from GameLoader...");
+        Map<String, Room> loadedRoomsMap = gameLoader.getLoadedRooms();
 
-        if (this.rooms == null || this.rooms.isEmpty())
-            throw new GameDataException("Initialization failed: No rooms were loaded or rooms map is null.");
+        if (loadedRoomsMap == null || loadedRoomsMap.isEmpty())
+            throw new GameDataException(
+                    "Initialization failed: GameLoader returned null or empty rooms map after successful load.");
+
+        this.rooms = loadedRoomsMap;
         System.out
                 .println("[Initialize] Rooms map populated in Game instance. Total rooms loaded: " + this.rooms.size());
 
-        String startRoomName = gameLoader.getPlayerStartRoomName();
-
-        if (startRoomName == null || this.rooms.containsKey(startRoomName))
-            throw new GameDataException("Initialization failed: Starting room name '" + startRoomName
-                    + "' provided by loader, but not found in loaded rooms map");
-
-        this.player = new Player(startRoomName);
-        this.player.setCurrentRoomName(startRoomName);
-
-        System.out.println("[Initialize] Player object created.");
-        System.out.println("[Initialize] Player starting room set to: '" + startRoomName + "'.");
-        System.out.println("----------------------------------------");
-        System.out.println("Game initialization complete!");
+        System.out.println("[Initialize] Next steps: Create player and set starting location...");
         System.out.println("----------------------------------------");
     }
 }
