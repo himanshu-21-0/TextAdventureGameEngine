@@ -20,7 +20,7 @@ public class Game {
         System.out.println("Game object created. Ready for initialization.");
     }
 
-    public void initialize(String dataFilePath) throws IOException, JsonSyntaxException, GameDataException {
+    public void initialize(String dataFilePath) throws IOException, JsonSyntaxException, GameDataException, IllegalArgumentException {
         System.out.println("----------------------------------------");
         System.out.println("Initializing game from data file: " + dataFilePath + "...");
         System.out.println("----------------------------------------");
