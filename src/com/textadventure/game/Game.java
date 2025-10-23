@@ -41,8 +41,14 @@ public class Game {
         this.rooms = loadedRoomsMap;
         System.out
                 .println("[Initialize] Rooms map populated in Game instance. Total rooms loaded: " + this.rooms.size());
+        System.out.println("----------------------------------------");
 
-        System.out.println("[Initialize] Next steps: Create player and set starting location...");
+        System.out.println("[Initialize] Creating the Player object...");
+        this.player = new Player();
+
+        System.out.println("[Initialize] Player object created successfully.");
+
+        System.out.println("[Initialize] Next step: Determine and set player's starting location...");
         System.out.println("----------------------------------------");
     }
 }
