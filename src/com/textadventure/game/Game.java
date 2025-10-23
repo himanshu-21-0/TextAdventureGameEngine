@@ -12,6 +12,7 @@ public class Game {
     private GameLoader gameLoader;
 
     public Game() {
+        this.gameLoader = new GameLoader();
         System.out.println("Game object created. Ready for initialization.");
     }
 }
