@@ -63,4 +63,26 @@ public class Game {
         System.out.println("Player is ready at location: " + this.player.getCurrentRoomName());
         System.out.println("----------------------------------------");
     }
+
+    public Room getRoom(String roomName) {
+        if (this.rooms == null) {
+            System.err.println(
+                    "Warning: Attempted to getRoom('" + roomName + "') but the game rooms map is not initialized.");
+            return null;
+        }
+        return this.rooms.get(roomName);
+    }
+
+    public Room getCurrentRoom() {
+        if (this.player == null) {
+            System.err.println("Warning: Attempted to getCurrentRoom but the player object is not initialized.");
+            return null;
+        }
+        String currentRoomName = this.player.getCurrentRoomName();
+        if (currentRoomName == null) {
+            System.err.println("Warning: Attempted to getCurrentRoom but the player's current room name is null.");
+            return null;
+        }
+        return getRoom(currentRoomName);
+    }
 }
