@@ -8,8 +8,8 @@ import java.util.Map;
 
 public class Game {
     private Map<String, Room> rooms;
-
     private Player player;
+    private GameLoader gameLoader;
 
     public Game() {
         System.out.println("Game object created. Ready for initialization.");
