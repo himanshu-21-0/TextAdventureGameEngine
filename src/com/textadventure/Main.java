@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Scanner;
+import java.util.Arrays;
 
 public class Main {
 
@@ -68,7 +69,7 @@ public class Main {
 
         CommandParser commandParser = new CommandParser();
 
-        Scanner Scanner = new Scanner(System.in);
+        Scanner scanner = new Scanner(System.in);
 
         System.out.println("[Main] Entring main game loop...");
         boolean gameRunning = true;
@@ -113,11 +114,18 @@ public class Main {
 
             System.out.print("> ");
 
+            String userInput = scanner.nextLine();
+
+            System.out.println("[Debug] User entered: '" + userInput + "'");
+
             System.out.println("[Game Loop] Temp break, exiting loop");
             gameRunning = false;
         }
 
         System.out.println("\n[Main] Exited game loop.");
+
+        scanner.close();
+        System.out.println("[Main] Input scanner closed");
 
         System.out.println("\n=========================================");
         System.out.println("      Thank you for playing!      ");
