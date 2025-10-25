@@ -3,6 +3,7 @@ package com.textadventure;
 import com.textadventure.game.Game;
 import com.textadventure.model.Room;
 import com.textadventure.model.Item;
+import com.textadventure.engine.CommandParser;
 import com.textadventure.engine.GameLoader.GameDataException;
 import com.google.gson.JsonSyntaxException;
 import java.io.IOException;
@@ -10,7 +11,7 @@ import java.util.stream.Collectors;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-// import java.util.Scanner;
+import java.util.Scanner;
 
 public class Main {
 
@@ -65,6 +66,10 @@ public class Main {
             return;
         }
 
+        CommandParser commandParser = new CommandParser();
+
+        Scanner Scanner = new Scanner(System.in);
+
         System.out.println("[Main] Entring main game loop...");
         boolean gameRunning = true;
 
@@ -105,6 +110,8 @@ public class Main {
             }
 
             System.out.println("========================================");
+
+            System.out.print("> ");
 
             System.out.println("[Game Loop] Temp break, exiting loop");
             gameRunning = false;
