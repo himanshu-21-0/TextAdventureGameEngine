@@ -68,8 +68,10 @@ public class Main {
         }
 
         CommandParser commandParser = new CommandParser();
+        System.out.println("[Main] CommandParser instance created.");
 
         Scanner scanner = new Scanner(System.in);
+        System.out.println("[Main] Input Scanner instance created.");
 
         System.out.println("[Main] Entring main game loop...");
         boolean gameRunning = true;
@@ -88,7 +90,6 @@ public class Main {
             System.out.println("Location: " + currentRoom.getName());
             System.out.println("----------------------------------------");
             System.out.println(currentRoom.getDescription());
-            System.out.println("========================================");
 
             List<Item> itemsInRoom = currentRoom.getItems();
 
@@ -130,8 +131,6 @@ public class Main {
                     System.out.println("[Game Loop] Command '" + commandVerb + "' received, processing TBD.");
             } else
                 System.out.println("Please enter a command.");
-
-            System.out.println("[Game Loop] Temp break, exiting loop");
         }
 
         System.out.println("\n[Main] Exited game loop.");
