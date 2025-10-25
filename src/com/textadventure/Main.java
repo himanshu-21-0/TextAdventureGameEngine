@@ -128,7 +128,7 @@ public class Main {
                     gameRunning = false;
                     System.out.println("Quitting game. Goodbye!");
                 } else
-                    System.out.println("[Game Loop] Command '" + commandVerb + "' received, processing TBD.");
+                    game.processCommand(commandParts);
             } else
                 System.out.println("Please enter a command.");
         }
