@@ -9,6 +9,7 @@ import com.google.gson.JsonSyntaxException;
 import java.io.IOException;
 
 import java.util.Map;
+import java.util.Arrays;
 
 public class Game {
     private Map<String, Room> rooms;
@@ -18,6 +19,10 @@ public class Game {
     public Game() {
         this.gameLoader = new GameLoader();
         System.out.println("Game object created. Ready for initialization.");
+    }
+
+    public void processCommand(String[] commandParts) {
+        System.out.println("[Game.processCommand] Received command: " + Arrays.toString(commandParts));
     }
 
     public void initialize(String dataFilePath)
