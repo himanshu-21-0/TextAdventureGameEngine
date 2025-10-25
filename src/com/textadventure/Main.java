@@ -2,10 +2,12 @@ package com.textadventure;
 
 import com.textadventure.game.Game;
 import com.textadventure.model.Room;
+import com.textadventure.model.Item;
 import com.textadventure.engine.GameLoader.GameDataException;
 
 import com.google.gson.JsonSyntaxException;
 import java.io.IOException;
+import java.util.stream.Collectors;
 
 import java.util.Scanner;
 
@@ -74,6 +76,12 @@ public class Main {
                 gameRunning = false;
                 break;
             }
+
+            System.out.println("\n========================================");
+            System.out.println("Location: " + currentRoom.getName());
+            System.out.println("----------------------------------------");
+            System.out.println(currentRoom.getDescription());
+            System.out.println("========================================");
 
             System.out.println("\n[Game Loop] Current Room: '" + currentRoom.getName() + "'");
 
