@@ -121,6 +121,16 @@ public class Main {
             String[] commandParts = commandParser.parse(userInput);
             System.out.println("[Debug] Parsed command: " + Arrays.toString(commandParts));
 
+            if (commandParts.length > 0) {
+                String commandVerb = commandParts[0];
+                if (commandVerb.equals("quit") || commandVerb.equals("exit")) {
+                    gameRunning = false;
+                    System.out.println("Quitting game. Goodbye!");
+                } else
+                    System.out.println("[Game Loop] Command '" + commandVerb + "' received, processing TBD.");
+            } else
+                System.out.println("Please enter a command.");
+
             System.out.println("[Game Loop] Temp break, exiting loop");
             gameRunning = false;
         }
