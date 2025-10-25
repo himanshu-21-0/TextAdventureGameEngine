@@ -1,6 +1,7 @@
 package com.textadventure;
 
 import com.textadventure.game.Game;
+import com.textadventure.model.Room;
 import com.textadventure.engine.GameLoader.GameDataException;
 
 import com.google.gson.JsonSyntaxException;
@@ -65,7 +66,16 @@ public class Main {
         boolean gameRunning = true;
 
         while (gameRunning) {
-            System.out.println("\n[Game Loop] Processing turn... (Display/Input/Parse/Process coming soon!)");
+            Room currentRoom = game.getCurrentRoom();
+            if (currentRoom == null) {
+                System.err.println(
+                        "\n[Main] FATAL ERROR: Cannot determine player's current location. Player or Room data is invalid.");
+                System.err.println("       Check JSON data integrity and Game/Player class logic.");
+                gameRunning = false;
+                break;
+            }
+
+            System.out.println("\n[Game Loop] Current Room: '" + currentRoom.getName() + "'");
 
             System.out.println("[Game Loop] Temp break, exiting loop");
             gameRunning = false;
