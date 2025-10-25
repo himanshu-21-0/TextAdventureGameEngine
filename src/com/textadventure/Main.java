@@ -4,11 +4,10 @@ import com.textadventure.game.Game;
 import com.textadventure.model.Room;
 import com.textadventure.model.Item;
 import com.textadventure.engine.GameLoader.GameDataException;
-
 import com.google.gson.JsonSyntaxException;
 import java.io.IOException;
 import java.util.stream.Collectors;
-
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -83,7 +82,16 @@ public class Main {
             System.out.println(currentRoom.getDescription());
             System.out.println("========================================");
 
-            System.out.println("\n[Game Loop] Current Room: '" + currentRoom.getName() + "'");
+            List<Item> itemsInRoom = currentRoom.getItems();
+
+            if (itemsInRoom != null && !itemsInRoom.isEmpty()) {
+                String itemNames = itemsInRoom.stream().map(Item::getName).collect(Collectors.joining(","));
+
+                System.out.println("----------------------------------------"); // Separator
+                System.out.println("You see: " + itemNames + ".");
+            }
+
+            System.out.println("========================================");
 
             System.out.println("[Game Loop] Temp break, exiting loop");
             gameRunning = false;
