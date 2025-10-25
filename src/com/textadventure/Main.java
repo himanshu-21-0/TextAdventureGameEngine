@@ -132,7 +132,6 @@ public class Main {
                 System.out.println("Please enter a command.");
 
             System.out.println("[Game Loop] Temp break, exiting loop");
-            gameRunning = false;
         }
 
         System.out.println("\n[Main] Exited game loop.");
