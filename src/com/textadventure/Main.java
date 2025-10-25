@@ -13,7 +13,8 @@ public class Main {
         Game game = new Game();
         System.out.println("[Main] Game instance created.");
 
-        System.out.println("\n...Application setup complete (game loop not yet implemented).");
+        System.out.println("\\n" + //
+                "...Application setup in progress (Game object created, loop not yet implemented).");
         System.out.println("========================================");
     }
 }
