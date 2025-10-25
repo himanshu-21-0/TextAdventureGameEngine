@@ -118,6 +118,9 @@ public class Main {
 
             System.out.println("[Debug] User entered: '" + userInput + "'");
 
+            String[] commandParts = commandParser.parse(userInput);
+            System.out.println("[Debug] Parsed command: " + Arrays.toString(commandParts));
+
             System.out.println("[Game Loop] Temp break, exiting loop");
             gameRunning = false;
         }
