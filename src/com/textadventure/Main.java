@@ -87,7 +87,7 @@ public class Main {
             if (itemsInRoom != null && !itemsInRoom.isEmpty()) {
                 String itemNames = itemsInRoom.stream().map(Item::getName).collect(Collectors.joining(", "));
 
-                System.out.println("----------------------------------------"); // Separator
+                System.out.println("----------------------------------------");
                 System.out.println("You see: " + itemNames + ".");
             }
 
