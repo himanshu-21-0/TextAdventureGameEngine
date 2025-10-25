@@ -1,5 +1,12 @@
 package com.textadventure;
 
 public class Main {
-    
+    public static void main(String[] args) {
+        System.out.println("========================================");
+        System.out.println(" Welcome to the Text Adventure Engine! ");
+        System.out.println("========================================");
+        System.out.println("Starting application...");
+        System.out.println("\n...Application setup complete (game loop not yet implemented).");
+        System.out.println("========================================");
+    }
 }
