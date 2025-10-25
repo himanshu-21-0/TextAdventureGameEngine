@@ -31,6 +31,13 @@ public class Main {
             e.printStackTrace();
             return;
 
+        } catch (JsonSyntaxException e) {
+            System.err.println("[Main] FATAL ERROR during initialization: Invalid JSON syntax in game data file.");
+            System.err.println("       File Path: " + ADVENTURE_DATA_PATH);
+            System.err.println("       Error: " + e.getMessage());
+            e.printStackTrace();
+            return;
+
         } catch (GameDataException e) {
             System.err.println("[Main] FATAL ERROR during initialization: Invalid game data structure.");
             System.err.println("       File Path: " + ADVENTURE_DATA_PATH);
