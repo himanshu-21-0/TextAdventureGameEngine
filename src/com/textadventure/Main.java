@@ -8,6 +8,8 @@ import com.google.gson.JsonSyntaxException;
 import java.io.IOException;
 import java.util.stream.Collectors;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.Scanner;
 
 public class Main {
@@ -89,6 +91,17 @@ public class Main {
 
                 System.out.println("----------------------------------------");
                 System.out.println("You see: " + itemNames + ".");
+            }
+
+            Map<String, String> exits = currentRoom.getExits();
+
+            if (exits != null && !exits.isEmpty()) {
+                Set<String> directions = exits.keySet();
+
+                String exitDirections = directions.stream().sorted().collect(Collectors.joining(" "));
+
+                System.out.println("----------------------------------------");
+                System.out.println("Exits: " + exitDirections);
             }
 
             System.out.println("========================================");
