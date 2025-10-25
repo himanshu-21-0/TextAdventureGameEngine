@@ -6,6 +6,8 @@ import com.textadventure.engine.GameLoader.GameDataException;
 import com.google.gson.JsonSyntaxException;
 import java.io.IOException;
 
+import java.util.Scanner;
+
 public class Main {
 
     private static final String ADVENTURE_DATA_PATH = "data/adventure.json";
@@ -59,8 +61,20 @@ public class Main {
             return;
         }
 
-        System.out.println("\\n" + //
-                "...Application setup in progress (Game object created, loop not yet implemented).");
-        System.out.println("========================================");
+        System.out.println("[Main] Entring main game loop...");
+        boolean gameRunning = true;
+
+        while (gameRunning) {
+            System.out.println("\n[Game Loop] Processing turn... (Display/Input/Parse/Process coming soon!)");
+
+            System.out.println("[Game Loop] Temp break, exiting loop");
+            gameRunning = false;
+        }
+
+        System.out.println("\n[Main] Exited game loop.");
+
+        System.out.println("\n=========================================");
+        System.out.println("      Thank you for playing!      ");
+        System.out.println("=========================================");
     }
 }
