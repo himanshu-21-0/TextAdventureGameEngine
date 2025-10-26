@@ -103,6 +103,15 @@ public class Game {
                 else {
                     String direction = commandParts[1];
                     System.out.println("[Game.processCommand] Extracted direction: '" + direction + "'");
+
+                    Room currentRoom = getCurrentRoom();
+
+                    if (currentRoom == null) {
+                        System.err.println(
+                                "[Game.processCommand] CRITICAL ERROR: Cannot determine current location to process 'go' command.");
+                        break;
+                    }
+                    System.out.println("[Game.processCommand] Current room is: '" + currentRoom.getName() + "'");
                 }
                 break;
             default:
