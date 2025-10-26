@@ -136,6 +136,10 @@ public class Game {
 
                         System.out.println("[Debug] Next room name retrieved: '" + nextRoomName + "'");
 
+                        player.setCurrentRoomName(nextRoomName);
+
+                        System.out.println("[Debug] Player location updated to: '" + player.getCurrentRoomName() + "'");
+
                     } else {
                         System.out.println("You can't go " + direction + " from here.");
 
