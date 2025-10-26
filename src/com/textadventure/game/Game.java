@@ -112,6 +112,22 @@ public class Game {
                         break;
                     }
                     System.out.println("[Game.processCommand] Current room is: '" + currentRoom.getName() + "'");
+
+                    Map<String, String> exits = currentRoom.getExits();
+
+                    if (exits == null) {
+                        System.err.println("[Game.processCommand] Error: Room '" + currentRoom.getName()
+                                + "' has a null exits map!");
+                        System.out.println("There seem to be no exit from here.");
+                        break;
+                    }
+
+                    if (exits.containsKey(direction)) {
+                        System.out.println("[Game.processCommand] Valid exit direction '" + direction + "' found."); // Debug
+                    } else {
+                        System.out.println("You can't go " + direction + " from here.");
+
+                    }
                 }
                 break;
             default:
