@@ -9,7 +9,6 @@ import com.google.gson.JsonSyntaxException;
 import java.io.IOException;
 
 import java.util.Map;
-import java.util.Arrays;
 
 public class Game {
     private Map<String, Room> rooms;
@@ -123,7 +122,20 @@ public class Game {
                     }
 
                     if (exits.containsKey(direction)) {
-                        System.out.println("[Game.processCommand] Valid exit direction '" + direction + "' found."); // Debug
+                        System.out.println("[Game.processCommand] Valid exit direction '" + direction + "' found.");
+
+                        String nextRoomName = exits.get(direction);
+
+                        if (nextRoomName == null || nextRoomName.trim().isEmpty()) {
+                            System.err.println("[Game.processCommand] ERROR: Exit '" + direction + "' in room '"
+                                    + currentRoom.getName()
+                                    + "' leads to an invalid room name (null or empty). Check JSON data.");
+                            System.out.println("Hmm, the way " + direction + " seems blocked or leads nowhere.");
+                            break;
+                        }
+
+                        System.out.println("[Debug] Next room name retrieved: '" + nextRoomName + "'");
+
                     } else {
                         System.out.println("You can't go " + direction + " from here.");
 
