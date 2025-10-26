@@ -140,6 +140,8 @@ public class Game {
 
                         System.out.println("[Debug] Player location updated to: '" + player.getCurrentRoomName() + "'");
 
+                        System.out.println("You move " + direction + ".");
+
                     } else {
                         System.out.println("You can't go " + direction + " from here.");
 
