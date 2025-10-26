@@ -101,7 +101,8 @@ public class Game {
                 if (commandParts.length < 2)
                     System.out.println("Go where? Please specify a direction (e.g., 'go north').");
                 else {
-                    System.out.println("[Game.processCommand] Direction provided. Processing...(TBD)");
+                    String direction = commandParts[1];
+                    System.out.println("[Game.processCommand] Extracted direction: '" + direction + "'");
                 }
                 break;
             default:
