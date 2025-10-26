@@ -98,7 +98,11 @@ public class Game {
 
         switch (commandVerb) {
             case "go":
-                System.out.println("[Game.processCommand] 'go' command recognized. Movement logic TBD.");
+                if (commandParts.length < 2)
+                    System.out.println("Go where? Please specify a direction (e.g., 'go north').");
+                else {
+                    System.out.println("[Game.processCommand] Direction provided. Processing...(TBD)");
+                }
                 break;
             default:
                 System.out.println(
