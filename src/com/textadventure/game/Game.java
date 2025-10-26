@@ -21,10 +21,6 @@ public class Game {
         System.out.println("Game object created. Ready for initialization.");
     }
 
-    public void processCommand(String[] commandParts) {
-        System.out.println("[Game.processCommand] Received command: " + Arrays.toString(commandParts));
-    }
-
     public void initialize(String dataFilePath)
             throws IOException, JsonSyntaxException, GameDataException, IllegalArgumentException {
         System.out.println("----------------------------------------");
@@ -89,5 +85,25 @@ public class Game {
             return null;
         }
         return getRoom(currentRoomName);
+    }
+
+    public void processCommand(String[] commandParts) {
+        if (commandParts == null || commandParts.length == 0) {
+            System.out.println("Huh? Please enter a command.");
+            return;
+        }
+
+        String commandVerb = commandParts[0];
+        System.out.println("[Game.processCommand] Processing verb: '" + commandVerb + "'");
+
+        switch (commandVerb) {
+            case "go":
+                System.out.println("[Game.processCommand] 'go' command recognized. Movement logic TBD.");
+                break;
+            default:
+                System.out.println(
+                        "Sorry, I don't know how to '" + commandVerb + "'. Try 'go', 'look', 'inventory', or 'quit'.");
+                break;
+        }
     }
 }
