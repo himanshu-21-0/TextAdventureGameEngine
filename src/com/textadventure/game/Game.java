@@ -2,6 +2,7 @@ package com.textadventure.game;
 
 import com.textadventure.model.Room;
 import com.textadventure.model.Player;
+import com.textadventure.model.Item;
 import com.textadventure.engine.GameLoader;
 import com.textadventure.engine.GameLoader.GameDataException;
 
@@ -9,6 +10,7 @@ import com.google.gson.JsonSyntaxException;
 import java.io.IOException;
 
 import java.util.Map;
+import java.util.List;
 
 public class Game {
     private Map<String, Room> rooms;
@@ -153,7 +155,16 @@ public class Game {
                 break;
             case "inventory":
             case "inv":
-                System.out.println("Checking inventory... (details TBD)");
+                List<Item> inventory = player.getInventory();
+
+                if (inventory == null || inventory.isEmpty()) {
+                    System.out.println("Your inventory is empty.");
+                } else {
+                    System.out.println("You are carrying: ");
+                    for (Item item : inventory) {
+                        System.out.println("-" + item.getName());
+                    }
+                }
                 break;
             case "take":
                 System.out.println("Taking item.. (details TBD)");
