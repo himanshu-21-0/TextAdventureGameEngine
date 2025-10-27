@@ -219,6 +219,53 @@ public class Game {
                     System.out.println("There is no '" + targetItemName + "' here to take.");
                 }
                 break;
+            case "examine":
+            case "x":
+                if (commandParts.length < 2) {
+                    System.out.println("Examine what? Please specify an item (e.g., 'examine key')");
+                    break;
+                }
+
+                String targetExamineItemName = String.join(" ",
+                        Arrays.copyOfRange(commandParts, 1, commandParts.length));
+                System.out.println("[Debug] Player wants to examine: '" + targetExamineItemName + "'");
+
+                boolean itemExamined = false;
+
+                List<Item> inventory = player.getInventory();
+                if (inventory != null && !inventory.isEmpty()) {
+                    for (Item item : inventory) {
+                        if (item.getName().equalsIgnoreCase(targetExamineItemName)) {
+                            System.out.println(item.getDescription());
+                            itemExamined = true;
+                            break;
+                        }
+                    }
+                }
+                if (!itemExamined) {
+                    Room currentRoom = getCurrentRoom();
+                    if (currentRoom != null) {
+                        List<Item> itemsInRoom = currentRoom.getItems();
+                        if (itemsInRoom != null && !itemsInRoom.isEmpty()) {
+                            for (Item item : itemsInRoom) {
+                                if (item.getName().equalsIgnoreCase(targetExamineItemName)) {
+                                    System.out.println(item.getDescription());
+                                    itemExamined = true;
+                                    break;
+                                }
+                            }
+                        }
+                    } else {
+                        System.err.println(
+                                "[Game.processCommand] ERROR: Cannot examine room items, current room is null.");
+                        itemExamined = true;
+                    }
+                }
+                if (!itemExamined) {
+                    System.out.println(
+                            "You don't see any '" + targetExamineItemName + "' here or in your inventory to examine.");
+                }
+                break;
             default:
                 System.out.println(
                         "Sorry, I don't know how to '" + commandVerb + "'. Try 'go', 'look', 'inventory', or 'quit'.");
