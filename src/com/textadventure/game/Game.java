@@ -148,6 +148,16 @@ public class Game {
                     }
                 }
                 break;
+            case "look":
+                System.out.println("You look around");
+                break;
+            case "inventory":
+            case "inv":
+                System.out.println("Checking inventory... (details TBD)");
+                break;
+            case "take":
+                System.out.println("Taking item.. (details TBD)");
+                break;
             default:
                 System.out.println(
                         "Sorry, I don't know how to '" + commandVerb + "'. Try 'go', 'look', 'inventory', or 'quit'.");
