@@ -217,7 +217,6 @@ public class Game {
                     System.out.println("You take the " + itemToTake.getName() + ".");
                 } else {
                     System.out.println("There is no '" + targetItemName + "' here to take.");
-
                 }
                 break;
             default:
