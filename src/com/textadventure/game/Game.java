@@ -11,6 +11,9 @@ import java.io.IOException;
 
 import java.util.Map;
 import java.util.List;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.stream.Collectors;
 
 public class Game {
     private Map<String, Room> rooms;
@@ -167,7 +170,55 @@ public class Game {
                 }
                 break;
             case "take":
-                System.out.println("Taking item.. (details TBD)");
+                if (commandParts.length < 2) {
+                    System.out.println("Take what? Please specify an item (e.g., 'take key').");
+                    break;
+                }
+
+                String targetItemName = String.join(" ", Arrays.copyOfRange(commandParts, 1, commandParts.length));
+                System.out.println("[Debug] Trying to take item: '" + targetItemName + "'");
+
+                Room currentRoom = getCurrentRoom();
+                if (currentRoom == null) {
+                    System.err.println(
+                            "[Game.processCommand] CRITICAL ERROR: Cannot determine current location to take item.");
+                    break;
+                }
+
+                List<Item> itemInRoom = currentRoom.getItems();
+                if (itemInRoom == null) {
+                    System.err.println(
+                            "[Game.processCommand] ERROR: Room '" + currentRoom.getName() + "' has a null items list!");
+                    System.out.println("There appears to be nothing to take here.");
+                    break;
+                }
+
+                Item itemToTake = null;
+                boolean itemFound = false;
+
+                Iterator<Item> iterator = itemInRoom.iterator();
+                while (iterator.hasNext()) {
+                    Item roomItem = iterator.next();
+
+                    if (roomItem.getName().equalsIgnoreCase(targetItemName)) {
+                        itemToTake = roomItem;
+                        itemFound = true;
+
+                        iterator.remove();
+                        System.out.println("[Debug] Removed '" + itemToTake.getName() + "' from room '"
+                                + currentRoom.getName() + "'.");
+                        break;
+                    }
+                }
+                if (itemFound && itemToTake != null) {
+                    player.takeItem(itemToTake);
+                    System.out.println("[Debug] Added '" + itemToTake.getName() + "' to player inventory.");
+
+                    System.out.println("You take the " + itemToTake.getName() + ".");
+                } else {
+                    System.out.println("There is no '" + targetItemName + "' here to take.");
+
+                }
                 break;
             default:
                 System.out.println(
