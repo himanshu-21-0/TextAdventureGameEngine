@@ -267,9 +267,13 @@ public class Game {
                             "You don't see any '" + targetExamineItemName + "' here or in your inventory to examine.");
                 }
                 break;
+            case "save":
+                System.out.println("Attempting to save game state...");
+                System.out.println("(Save functionality to be fully implemented in next steps)");
             default:
                 System.out.println(
-                        "Sorry, I don't know how to '" + commandVerb + "'. Try 'go', 'look', 'inventory', or 'quit'.");
+                        "Sorry, I don't know how to '" + commandVerb
+                                + "'. Try 'go', 'look', 'inventory', 'examine', 'save', 'load', or 'quit'.");
                 break;
         }
     }
