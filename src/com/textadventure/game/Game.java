@@ -10,9 +10,13 @@ import com.google.gson.JsonSyntaxException;
 import java.io.IOException;
 
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.Collections;
+import java.util.HashMap;
 
 public class Game {
     private Map<String, Room> rooms;
@@ -93,6 +97,12 @@ public class Game {
     public void processCommand(String[] commandParts) {
         if (commandParts == null || commandParts.length == 0) {
             System.out.println("Huh? Please enter a command.");
+            return;
+        }
+
+        if (player == null || rooms == null) {
+            System.err.println(
+                    "[Game.processCommand] CRITICAL ERROR: Cannot save game. Player or Rooms not initialized.");
             return;
         }
 
@@ -233,9 +243,9 @@ public class Game {
 
                 boolean itemExamined = false;
 
-                List<Item> playerInventory = player.getInventory(); // Rename inventory to playerInventory
-                if (playerInventory != null && !playerInventory.isEmpty()) {
-                    for (Item item : playerInventory) {
+                List<Item> playersInventory = player.getInventory(); // Rename inventory to playersInventory
+                if (playersInventory != null && !playersInventory.isEmpty()) {
+                    for (Item item : playersInventory) {
                         if (item.getName().equalsIgnoreCase(targetExamineItemName)) {
                             System.out.println(item.getDescription());
                             itemExamined = true;
@@ -269,7 +279,43 @@ public class Game {
                 break;
             case "save":
                 System.out.println("Attempting to save game state...");
-                System.out.println("(Save functionality to be fully implemented in next steps)");
+
+                String playerLocationName = player.getCurrentRoomName();
+                if (playerLocationName == null) {
+                    System.err.println("[Game.processCommand] ERROR: Cannot save game. Player location is unknown.");
+                    break;
+                }
+                System.out.println("[Debug] Saving player location: " + playerLocationName);
+
+                List<String> inventoryItemNames = new ArrayList<>();
+                List<Item> playerInventory = player.getInventory();
+                if (playerInventory != null) {
+                    inventoryItemNames = playerInventory.stream().map(Item::getName).collect(Collectors.toList());
+                }
+                System.out.println("[Debug] Saving player inventory: " + inventoryItemNames);
+
+                Map<String, List<String>> currentRoomItems = new HashMap<>();
+
+                for (Map.Entry<String, Room> entry : rooms.entrySet()) {
+                    String roomName = entry.getKey();
+                    Room room = entry.getValue();
+                    List<String> itemNamesInRoom = new ArrayList<>();
+
+                    if (room != null && room.getItems() != null) {
+                        itemNamesInRoom = room.getItems().stream().map(Item::getName).collect(Collectors.toList());
+                    } else if (room == null) {
+                        System.err.println(
+                                "[Game.processCommand] WARNING: Skipping null room object during save for key: "
+                                        + roomName);
+                        continue;
+                    }
+                    currentRoomItems.put(roomName, itemNamesInRoom);
+                }
+
+                System.out.println("[Debug] Saving room item states: " + currentRoomItems);
+
+                System.out.println("Data gathered successfully. (File writing TBD)");
+                break;
             default:
                 System.out.println(
                         "Sorry, I don't know how to '" + commandVerb
