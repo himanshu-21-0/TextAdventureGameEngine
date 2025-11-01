@@ -1,0 +1,45 @@
+{
+  "playerLocation": "Forest Clearing",
+  "playerInventory": [],
+  "roomItemStates": {
+    "Forgotten Shrine": [
+      "silver sword"
+    ],
+    "Village Outskirts": [
+      "health potion"
+    ],
+    "Hidden Vault": [
+      "golden crown",
+      "ancient tome"
+    ],
+    "Blacksmith Forge": [
+      "silver sword"
+    ],
+    "Forest Clearing": [
+      "shiny stone",
+      "torch"
+    ],
+    "Village Market": [],
+    "Sunken Catacombs": [],
+    "Observatory": [
+      "golden crown"
+    ],
+    "Underground Chamber": [
+      "rusty key"
+    ],
+    "Ancient Ruins": [
+      "rope"
+    ],
+    "Wizard Tower Base": [],
+    "Lakeside": [
+      "fishing rod"
+    ],
+    "Cave Entrance": [],
+    "Wizard Tower Library": [
+      "ancient tome"
+    ],
+    "Dark Tunnel": [
+      "old map"
+    ]
+  }
+}
