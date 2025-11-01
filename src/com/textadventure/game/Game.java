@@ -28,6 +28,7 @@ public class Game {
     private Player player;
     private final GameLoader gameLoader;
     private static final String SAVE_FILE_NAME = "savegame.json";
+    private Map<String, Item> allGameItems;
 
     public Game() {
         this.gameLoader = new GameLoader();
@@ -56,6 +57,14 @@ public class Game {
         System.out
                 .println("[Initialize] Rooms map populated in Game instance. Total rooms loaded: " + this.rooms.size());
         System.out.println("----------------------------------------");
+
+        this.allGameItems = gameLoader.getLoadedItems();
+        if (this.allGameItems == null) {
+            throw new GameDataException("Initialization failed: Could not load item definitions.");
+
+        }
+        System.out.println("[Game.initialize] Rooms loaded: " + this.rooms.keySet());
+        System.out.println("[Game.initialize] All game items loaded: " + this.allGameItems.keySet());
 
         System.out.println("[Initialize] Creating the Player object...");
         this.player = new Player();
