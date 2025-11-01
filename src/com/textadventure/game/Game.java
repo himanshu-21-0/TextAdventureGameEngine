@@ -350,7 +350,13 @@ public class Game {
                     System.err.println("ERROR: Could not save game state to file '" + SAVE_FILE_NAME + "'.");
                     e.printStackTrace();
                     System.out.println("Failed to save game. Please check permissions or disk space.");
+                } catch (Exception e) {
+                    // Generic catch for other unexpected errors during save
+                    System.err.println("ERROR: An unexpected error occurred while saving the game.");
+                    e.printStackTrace();
+                    System.out.println("Failed to save game.");
                 }
+
                 break;
             case "load":
                 System.out.println("Attempting to load game state from " + SAVE_FILE_NAME + "...");
