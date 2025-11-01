@@ -1,10 +1,12 @@
 {
-  "playerLocation": "Forest Clearing",
-  "playerInventory": [],
+  "playerLocation": "Forgotten Shrine",
+  "playerInventory": [
+    "fishing rod",
+    "rope",
+    "silver sword"
+  ],
   "roomItemStates": {
-    "Forgotten Shrine": [
-      "silver sword"
-    ],
+    "Forgotten Shrine": [],
     "Village Outskirts": [
       "health potion"
     ],
@@ -27,13 +29,9 @@
     "Underground Chamber": [
       "rusty key"
     ],
-    "Ancient Ruins": [
-      "rope"
-    ],
+    "Ancient Ruins": [],
     "Wizard Tower Base": [],
-    "Lakeside": [
-      "fishing rod"
-    ],
+    "Lakeside": [],
     "Cave Entrance": [],
     "Wizard Tower Library": [
       "ancient tome"
