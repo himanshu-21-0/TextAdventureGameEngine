@@ -116,9 +116,16 @@ public class Game {
             return;
         }
 
-        if (player == null || rooms == null) {
+        if (allGameItems == null) {
             System.err.println(
-                    "[Game.processCommand] CRITICAL ERROR: Cannot save game. Player or Rooms not initialized.");
+                    "[Game.processCommand] CRITICAL ERROR: Cannot process commands. Game item definitions not loaded.");
+            return;
+        }
+
+        if (player == null && !commandParts[0].equals("load") && !commandParts[0].equals("quit")) {
+            System.err.println("[Game.processCommand] CRITICAL ERROR: Player not initialized. Cannot process command: "
+                    + commandParts[0]);
+
             return;
         }
 
