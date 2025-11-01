@@ -391,6 +391,12 @@ public class Game {
 
                     }
 
+                    if (rooms == null) {
+                        System.err.println("ERROR: Cannot apply loaded state, game rooms are not initialized.");
+                        System.out.println("Load failed. Game data might be missing.");
+                        break;
+                    }
+                    
                     String loadedLocation = loadedState.getPlayerLocation();
                     if (loadedLocation != null && rooms.containsKey(loadedLocation)) {
                         player.setCurrentRoomName(loadedLocation);
