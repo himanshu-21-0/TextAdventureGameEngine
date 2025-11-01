@@ -5,9 +5,15 @@ import com.textadventure.model.Player;
 import com.textadventure.model.Item;
 import com.textadventure.engine.GameLoader;
 import com.textadventure.engine.GameLoader.GameDataException;
+import com.textadventure.utils.SaveState;
 
 import com.google.gson.JsonSyntaxException;
+
+import java.io.FileWriter;
 import java.io.IOException;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -21,6 +27,7 @@ public class Game {
     private Map<String, Room> rooms;
     private Player player;
     private final GameLoader gameLoader;
+    private static final String SAVE_FILE_NAME = "savegame.json";
 
     public Game() {
         this.gameLoader = new GameLoader();
@@ -311,9 +318,21 @@ public class Game {
                     currentRoomItems.put(roomName, itemNamesInRoom);
                 }
 
-                System.out.println("[Debug] Saving room item states: " + currentRoomItems);
+                System.out.println("Data gathered for saving.");
 
-                System.out.println("Data gathered successfully. (File writing TBD)");
+                SaveState saveState = new SaveState(playerLocationName, inventoryItemNames, currentRoomItems);
+
+                Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+                try (FileWriter writer = new FileWriter(SAVE_FILE_NAME)) {
+                    gson.toJson(saveState, writer);
+                    System.out.println("Game saved successfully to " + SAVE_FILE_NAME + ".");
+
+                } catch (IOException e) {
+                    System.err.println("ERROR: Could not save game state to file '" + SAVE_FILE_NAME + "'.");
+                    e.printStackTrace();
+                    System.out.println("Failed to save game. Please check permissions or disk space.");
+                }
                 break;
             default:
                 System.out.println(
