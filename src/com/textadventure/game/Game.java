@@ -9,6 +9,7 @@ import com.textadventure.utils.SaveState;
 
 import com.google.gson.JsonSyntaxException;
 
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -359,6 +360,12 @@ public class Game {
 
                 try (FileReader reader = new FileReader(SAVE_FILE_NAME)) {
                     loadedState = gson1.fromJson(reader, SaveState.class);
+                    System.out.println("[Debug] Save file read and parsed successfully.");
+                }
+
+                catch (FileNotFoundException e) {
+                    System.out.println("No save file found ('" + SAVE_FILE_NAME + "'). Cannot load progress.");
+                    break;
                 }
 
                 catch (IOException e) {
@@ -396,7 +403,7 @@ public class Game {
                         System.out.println("Load failed. Game data might be missing.");
                         break;
                     }
-                    
+
                     String loadedLocation = loadedState.getPlayerLocation();
                     if (loadedLocation != null && rooms.containsKey(loadedLocation)) {
                         player.setCurrentRoomName(loadedLocation);
