@@ -9,6 +9,7 @@ import com.textadventure.utils.SaveState;
 
 import com.google.gson.JsonSyntaxException;
 
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -341,6 +342,119 @@ public class Game {
                     System.err.println("ERROR: Could not save game state to file '" + SAVE_FILE_NAME + "'.");
                     e.printStackTrace();
                     System.out.println("Failed to save game. Please check permissions or disk space.");
+                }
+                break;
+            case "load":
+                System.out.println("Attempting to load game state from " + SAVE_FILE_NAME + "...");
+
+                SaveState loadedState = null;
+                Gson gson1 = new Gson(); // Named gson to gson1
+
+                try (FileReader reader = new FileReader(SAVE_FILE_NAME)) {
+                    loadedState = gson1.fromJson(reader, SaveState.class);
+                }
+
+                catch (IOException e) {
+                    System.err.println("ERROR: Could not read save file '" + SAVE_FILE_NAME + "'.");
+                    e.printStackTrace();
+                    System.out.println("Failed to load game due to a file reading error.");
+                    break;
+                }
+
+                catch (JsonSyntaxException e) {
+                    System.err.println("ERROR: Save file '" + SAVE_FILE_NAME + "' is corrupted or has invalid format.");
+                    e.printStackTrace();
+                    System.out.println("Failed to load game. The save file might be damaged.");
+                    break;
+                }
+
+                catch (Exception e) {
+                    System.err.println("ERROR: An unexpected error occurred while loading the game.");
+                    e.printStackTrace();
+                    System.out.println("Failed to load game.");
+                    break;
+                }
+
+                if (loadedState != null) {
+                    System.out.println("[Debug] Save file loaded and parsed successfully.");
+
+                    if (player == null) {
+                        player = new Player();
+                        System.out.println("[Debug] Player object was null, created a new one for loading.");
+
+                    }
+
+                    String loadedLocation = loadedState.getPlayerLocation();
+                    if (loadedLocation != null && rooms.containsKey(loadedLocation)) {
+                        player.setCurrentRoomName(loadedLocation);
+                        System.out.println("[Debug] Player location set to: " + loadedLocation);
+
+                    } else {
+                        System.err.println("WARNING: Loaded location '" + loadedLocation
+                                + "' is invalid or not found in current game rooms. Player location not updated.");
+                    }
+
+                    List<String> loadedInvNames = loadedState.getPlayerInventory();
+                    if (loadedInvNames != null) {
+                        player.getInventory().clear();
+                        System.out.println("[Debug] Player inventory cleared.");
+                        for (String itemName : loadedInvNames) {
+                            Item item = allGameItems.get(itemName);
+                            if (item != null) {
+                                player.takeItem(item);
+                                System.out.println("[Debug] Added '" + itemName + "' to player inventory.");
+
+                            } else {
+                                System.err.println(
+                                        "WARNING: Unknown item '" + itemName + "' found in saved inventory. Skipping.");
+                            }
+                        }
+                    } else {
+                        System.err.println(
+                                "WARNING: Saved inventory data is missing. Player inventory may be incorrect.");
+                        player.getInventory().clear();
+                    }
+
+                    Map<String, List<String>> loadedRoomStates = loadedState.getRoomItemStates();
+                    if (loadedRoomStates != null) {
+                        for (Map.Entry<String, Room> roomEntry : rooms.entrySet()) {
+                            String roomName = roomEntry.getKey();
+                            Room room = roomEntry.getValue();
+
+                            if (room == null)
+                                continue;
+
+                            List<String> itemNamesForThisRoom = loadedRoomStates.get(roomName);
+
+                            room.getItems().clear();
+                            System.out.println("[Debug] Cleared items for room: " + roomName);
+
+                            if (itemNamesForThisRoom != null) {
+                                for (String itemName : itemNamesForThisRoom) {
+                                    Item item = allGameItems.get(itemName);
+                                    if (item != null) {
+                                        room.addItem(item);
+                                        System.out.println(
+                                                "[Debug] Added '" + itemName + "' back to room '" + roomName + "'.");
+                                    } else {
+                                        System.err.println("WARNING: Unknown item '" + itemName
+                                                + "' found in saved state for room '" + roomName + "'. Skipping.");
+                                    }
+                                }
+                            } else {
+                                System.out.println("[Debug] No saved item state found for room '" + roomName
+                                        + "'. Room remains empty.");
+                            }
+                        }
+                    } else {
+                        System.err.println(
+                                "WARNING: Saved room item state data is missing. Room contents may be incorrect.");
+                    }
+
+                    System.out.println("Game loaded successfully!");
+
+                } else {
+                    System.out.println("Failed to load game state. Loaded data was null.");
                 }
                 break;
             default:
