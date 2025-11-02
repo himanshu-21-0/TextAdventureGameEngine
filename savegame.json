@@ -5,12 +5,11 @@
     "silver sword",
     "shiny stone",
     "torch",
-    "fishing rod"
+    "fishing rod",
+    "silver sword"
   ],
   "roomItemStates": {
-    "Forgotten Shrine": [
-      "silver sword"
-    ],
+    "Forgotten Shrine": [],
     "Village Outskirts": [],
     "Hidden Vault": [
       "golden crown",
