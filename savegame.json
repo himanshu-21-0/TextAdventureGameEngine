@@ -1,26 +1,23 @@
 {
-  "playerLocation": "Forgotten Shrine",
+  "playerLocation": "Sunken Catacombs",
   "playerInventory": [
-    "fishing rod",
-    "rope",
-    "silver sword"
+    "health potion",
+    "silver sword",
+    "shiny stone",
+    "torch",
+    "fishing rod"
   ],
   "roomItemStates": {
-    "Forgotten Shrine": [],
-    "Village Outskirts": [
-      "health potion"
+    "Forgotten Shrine": [
+      "silver sword"
     ],
+    "Village Outskirts": [],
     "Hidden Vault": [
       "golden crown",
       "ancient tome"
     ],
-    "Blacksmith Forge": [
-      "silver sword"
-    ],
-    "Forest Clearing": [
-      "shiny stone",
-      "torch"
-    ],
+    "Blacksmith Forge": [],
+    "Forest Clearing": [],
     "Village Market": [],
     "Sunken Catacombs": [],
     "Observatory": [
@@ -29,7 +26,9 @@
     "Underground Chamber": [
       "rusty key"
     ],
-    "Ancient Ruins": [],
+    "Ancient Ruins": [
+      "rope"
+    ],
     "Wizard Tower Base": [],
     "Lakeside": [],
     "Cave Entrance": [],
