@@ -484,10 +484,10 @@ public class Game {
                 }
                 break;
             default:
-                System.out.println(
-                        "Sorry, I don't know how to '" + commandVerb
-                                + "'. Try 'go', 'look', 'inventory', 'examine', 'save', 'load', or 'quit'.");
+                System.out.println("Sorry, I don't understand the command '" + commandVerb + "'.");
+                System.out.println("Try one of these: go, look, take, inventory (inv), examine (x), save, load, quit");
                 break;
         }
+        System.out.println();
     }
 }
