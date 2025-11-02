@@ -351,7 +351,6 @@ public class Game {
                     e.printStackTrace();
                     System.out.println("Failed to save game. Please check permissions or disk space.");
                 } catch (Exception e) {
-                    // Generic catch for other unexpected errors during save
                     System.err.println("ERROR: An unexpected error occurred while saving the game.");
                     e.printStackTrace();
                     System.out.println("Failed to save game.");
