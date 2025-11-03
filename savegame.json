@@ -1,9 +1,6 @@
 {
   "playerLocation": "Forest Clearing",
-  "playerInventory": [
-    "shiny stone",
-    "torch"
-  ],
+  "playerInventory": [],
   "roomItemStates": {
     "Forgotten Shrine": [
       "silver sword"
@@ -18,7 +15,10 @@
     "Blacksmith Forge": [
       "silver sword"
     ],
-    "Forest Clearing": [],
+    "Forest Clearing": [
+      "shiny stone",
+      "torch"
+    ],
     "Village Market": [],
     "Sunken Catacombs": [],
     "Observatory": [
