@@ -37,6 +37,23 @@ public class Player {
         return this.inventory;
     }
 
+    public boolean removeItem(String itemName) {
+        if (itemName == null || itemName.isBlank() || inventory == null) {
+            return false;
+        }
+        Iterator<Item> iterator = inventory.iterator();
+        while (iterator.hasNext()) {
+            Item item = iterator.next();
+            if (item.getName() != null && item.getName().equalsIgnoreCase(itemName)) {
+                iterator.remove();
+                System.out.println("[Player Debug] Removed '" + itemName + "' from inventory."); 
+                return true;
+            }
+        }
+        System.out.println("[Player Debug] Item '" + itemName + "' not found in inventory to remove."); 
+        return false; 
+    }
+
     public String getCurrentRoomName() {
         return this.currentRoomName;
     }
@@ -72,10 +89,5 @@ public class Player {
             }
         }
         return false;
-    }
-
-    public boolean removeItem(String name) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'removeItem'");
     }
 }
