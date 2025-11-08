@@ -10,6 +10,7 @@ import com.textadventure.utils.SaveState;
 import com.textadventure.model.ExitData;
 import com.textadventure.model.Conditions;
 import com.textadventure.model.ConditionalDescription;
+import com.textadventure.model.ExitModification;
 
 import com.google.gson.JsonSyntaxException;
 
@@ -596,6 +597,56 @@ public class Game {
                                 + "' is not fully implemented yet.");
                     }
 
+                    ExitModification exitMod = usability.getModifiesExit();
+                    if (exitMod != null && currentRoom != null) {
+                        String directionToModify = exitMod.getDirection();
+                        if (directionToModify != null && !directionToModify.isBlank()) {
+                            ExitData exitToModify = currentRoom.getExit().get(directionToModify.toLowerCase());
+
+                            if (exitToModify != null) {
+                                System.out.println(
+                                        "[Debug Exit Mod] Found exit data for direction: " + directionToModify); // Debug
+                                Conditions exitConditions = exitToModify.getConditions();
+
+                                if (exitConditions == null) {
+                                    System.err.println("[WARN Exit Mod] Cannot modify exit '" + directionToModify
+                                            + "': No existing Conditions object found.");
+                                } else {
+                                    boolean modified = false;
+                                    if (exitMod.isClearRequiresItem()) {
+                                        if (exitConditions.getRequiresItem() != null) {
+                                            exitConditions.setRequiresItem(null);
+                                            System.out.println("The way " + directionToModify + " seems to unlock.");
+                                            modified = true;
+                                        } else {
+                                            System.out.println(
+                                                    "[Debug Exit Mod] Request to clear requiresItem, but none was set for "
+                                                            + directionToModify);
+                                        }
+                                    }
+                                    String newFailMessage = exitMod.getSetFailMessage();
+                                    if (newFailMessage != null) {
+                                        exitConditions.setFailMessage(newFailMessage);
+                                        System.out.println(
+                                                "Your perception of the way " + directionToModify + " changes.");
+                                        modified = true;
+                                    }
+
+                                    if (!modified) {
+                                        System.out
+                                                .println("[Debug Exit Mod] No effective modifications applied to exit "
+                                                        + directionToModify);
+                                    }
+                                }
+                            } else {
+                                System.err.println("[WARN Exit Mod] Cannot modify exit: Direction '" + directionToModify
+                                        + "' not found in current room '" + currentRoom.getName() + "'.");
+                            }
+                        } else {
+                            System.err.println("[WARN Exit Mod] Invalid modification data: Direction is missing.");
+                        }
+                    }
+
                     if (usability.isConsumesItem()) {
                         System.out.println("[Debug Use] Consuming item: " + itemToUse.getName());
                         boolean removed = player.removeItem(itemToUse.getName());
@@ -606,12 +657,6 @@ public class Game {
                                     + "' but it couldn't be removed from inventory.");
                         }
                     }
-
-                    if (usability.isConsumesItem()) {
-                        System.out.println("[Debug Use] Consuming item: " + itemToUse.getName());
-                        player.dropItem(itemToUse.getName());
-                    }
-
                 }
                 break;
             case "load":
