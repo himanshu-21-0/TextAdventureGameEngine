@@ -96,7 +96,6 @@ public class Room {
     }
 
     public Item removeItem(String targetToRemove) {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'removeItem'");
     }
 }
