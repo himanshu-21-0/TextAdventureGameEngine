@@ -9,6 +9,7 @@ import com.textadventure.engine.GameLoader.GameDataException;
 import com.textadventure.utils.SaveState;
 import com.textadventure.model.ExitData;
 import com.textadventure.model.Conditions;
+import com.textadventure.model.ConditionalDescription;
 
 import com.google.gson.JsonSyntaxException;
 
@@ -135,14 +136,40 @@ public class Game {
     private void displayRoomInfo() {
         Room currentRoom = getCurrentRoom();
         if (currentRoom == null) {
-            System.out.println("You seem to be floating in the void..."); // Should not happen in normal play
+            System.out.println("You seem to be floating in the void...");
             return;
         }
 
         System.out.println("\n--------------------");
         System.out.println(currentRoom.getName());
         System.out.println("--------------------");
-        System.out.println(currentRoom.getDescription());
+
+        boolean descriptionDisplayed = false;
+        List<ConditionalDescription> conditionals = currentRoom.getConditionalDescriptions();
+
+        if (conditionals != null && !conditionals.isEmpty()) {
+            for (ConditionalDescription conditional : conditionals) {
+                if (conditional.getConditions() != null && conditional.getDescription() != null) {
+                    if (checkConditions(conditional.getConditions(), player)) {
+                        System.out.println(conditional.getDescription());
+                        descriptionDisplayed = true;
+                        System.out.println("[Debug Desc] Displayed conditional description.");
+                        break;
+                    } else {
+                        System.out.println("[Debug Desc] Conditions failed for a conditional description."); // Debug
+                    }
+                } else {
+                    System.err.println(
+                            "[WARN Desc] Conditional description entry is missing conditions or description text in room '"
+                                    + currentRoom.getName() + "'.");
+                }
+            }
+        }
+
+        if (!descriptionDisplayed) {
+            System.out.println(currentRoom.getDescription());
+            System.out.println("[Debug Desc] Displayed default description.");
+        }
 
         List<Item> itemsInRoom = currentRoom.getItems();
         if (!itemsInRoom.isEmpty()) {

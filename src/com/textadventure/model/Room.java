@@ -7,7 +7,8 @@ import java.util.Map;
 import java.util.Optional;
 
 public class Room {
-    private Map<String,ExitData> exit; //exits
+    private List<ConditionalDescription> conditionalDescriptions;
+    private Map<String, ExitData> exit; // exits
     private String name;
     private String description;
     private Map<String, String> exits;
@@ -24,6 +25,7 @@ public class Room {
         this.description = description;
         this.exits = new HashMap<>();
         this.items = new ArrayList<>();
+        this.conditionalDescriptions = new ArrayList<>();
     }
 
     public String getName() {
@@ -32,6 +34,10 @@ public class Room {
 
     public String getDescription() {
         return this.description;
+    }
+
+    public List<ConditionalDescription> getConditionalDescriptions() {
+        return conditionalDescriptions;
     }
 
     public void setDescription(String newDescription) {
