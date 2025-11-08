@@ -51,6 +51,12 @@
       "name": "Gate Control Area",
       "description": "You are in a small, cramped area near the base of the main stairs. A heavy iron gate blocks passage north. There's a mechanism on the wall here with an empty slot.",
       "items": ["lever slot"],
+      "conditionalDescriptions": [
+        {
+          "conditions": {},
+          "description": "You are in a small, cramped area... The heavy iron gate to the north stands slightly ajar. The lever in the mechanism beside it is now in the down position."
+        }
+      ],
       "exits": {
         "north": {
           "targetRoom": "Upstairs Landing",
