@@ -26,8 +26,8 @@
       "name": "Dark Cellar",
       "description": "Cold, damp air clings to your skin. The dim light barely reveals a stone floor slick with moisture.",
       "exits": {
-        "east": { "targetRoom": "Wine Rack Corner" },
-        "north": { "targetRoom": "Under the Stairs" }
+        "east": "Wine Rack Corner",
+        "north": "Under the Stairs"
       },
       "items": ["empty wine bottle"]
     },
@@ -36,7 +36,7 @@
       "description": "This corner holds a dusty, old wine rack. Some bottles remain, their labels long faded.",
       "items": ["rusty lever"],
       "exits": {
-        "west": { "targetRoom": "Dark Cellar" }
+        "west": "Dark Cellar"
       }
     },
     {
@@ -44,8 +44,8 @@
       "description": "Directly beneath the rickety wooden staircase. Dust and cobwebs cover everything here.",
       "items": ["sturdy plank"],
       "exits": {
-        "south": { "targetRoom": "Dark Cellar" },
-        "north": { "targetRoom": "Gate Control Area" }
+        "south": "Dark Cellar",
+        "north": "Gate Control Area"
       }
     },
     {
@@ -59,21 +59,15 @@
         }
       ],
       "exits": {
-        "north": {
-          "targetRoom": "Upstairs Landing",
-          "conditions": {
-            "requiresItem": "gate locked",
-            "failMessage": "The heavy iron gate to the north is securely locked. It seems operated by the nearby lever mechanism."
-          }
-        },
-        "south": { "targetRoom": "Under the Stairs" }
+        "north": "Upstairs Landing",
+        "south": "Under the Stairs"
       }
     },
     {
       "name": "Upstairs Landing",
       "description": "You've passed the gate and reached the landing. A faint draft comes from the hallway ahead.",
       "exits": {
-        "south": { "targetRoom": "Gate Control Area" }
+        "south": "Gate Control Area"
       },
       "items": []
     }
