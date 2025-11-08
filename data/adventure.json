@@ -1,225 +1,74 @@
 {
-  "playerStart": "Forest Clearing",
-
+  "playerStart": "Dark Cellar",
   "items": [
     {
-      "name": "shiny stone",
-      "description": "A smooth, grey stone that catches the light in an interesting way. You feel it might be magical."
-    },
-    {
-      "name": "old map",
-      "description": "A brittle parchment marked with faint ink lines. It shows paths through the forest and hints of underground tunnels."
-    },
-    {
-      "name": "rusty key",
-      "description": "A corroded key covered in greenish rust. It might still open an ancient lock somewhere."
-    },
-    {
-      "name": "silver sword",
-      "description": "A gleaming sword etched with lunar symbols. It hums faintly when danger is near."
-    },
-    {
-      "name": "torch",
-      "description": "A wooden torch wrapped with cloth. Useful for lighting dark areas when ignited."
-    },
-    {
-      "name": "golden crown",
-      "description": "A crown encrusted with emeralds and rubies. It radiates both beauty and authority."
-    },
-    {
-      "name": "health potion",
-      "description": "A vial containing a bubbling red liquid.",
+      "name": "rusty lever",
+      "description": "A heavy iron lever, coated in rust. Looks like it fits into some kind of mechanism.",
       "usability": {
-        "target": "self",
-        "effectDescription": "You drink the potion. You feel invigorated!",
-        "consumesItem": true,
-        "unlocksExit": null,
-        "removesTarget": null,
-        "addsTarget": null,
-        "changesRoomDescriptionTo": null,
-        "addsItemToInventory": null
-      }
-    },
-    {
-      "name": "ancient tome",
-      "description": "A heavy book filled with runes. Some pages glow faintly under torchlight."
-    },
-    {
-      "name": "fishing rod",
-      "description": "A simple yet sturdy rod. Its line looks strong enough to haul more than just fish."
-    },
-    {
-      "name": "rope",
-      "description": "A long, thick rope made of hemp. Perfect for climbing or tying objects."
-    },
-    {
-      "name": "crystal orb",
-      "description": "A translucent sphere that reveals faint visions when held close. It hums with mysterious energy."
-    },
-    {
-      "name": "emerald amulet",
-      "description": "An amulet with a glowing green gem. It feels warm to the touch."
-    },
-    {
-      "name": "small key",
-      "description": "A small, tarnished brass key. Seems designed for a simple lock.",
-      "usability": {
-        "target": "rusty chest",
-        "effectDescription": "You insert the small key into the lock of the rusty chest and turn. *Click!* The lid springs open.",
+        "target": "lever slot",
+        "effectDescription": "You slide the rusty lever into the slot. With a grating screech, you pull it downwards. A loud *CLUNK* echoes from another room!",
         "consumesItem": false,
-        "unlocksExit": null,
-        "removesTarget": "rusty chest",
-        "addsTarget": "open chest",
-        "changesRoomDescriptionTo": null,
-        "addsItemToInventory": null
+        "modifiesExit": {
+          "direction": "north",
+          "clearRequiresItem": true,
+          "setFailMessage": "The northern gate groans open slightly."
+        }
       }
     },
     {
-      "name": "rusty chest",
-      "description": "A small, sturdy chest bound with rusty iron bands. It appears to be locked."
-    },
-    {
-      "name": "open chest",
-      "description": "The chest is now open, revealing its contents.",
-      "items": ["gold coin"]
-    },
-    {
-      "name": "gold coin",
-      "description": "A shiny gold coin stamped with an unfamiliar crest. It looks valuable."
+      "name": "lever slot",
+      "description": "A heavy-duty slot mechanism is embedded in the wall, missing its lever."
     }
   ],
-
   "rooms": [
     {
-      "name": "Forest Clearing",
-      "description": "You stand in a quiet clearing surrounded by towering pines. Birds sing overhead. Paths lead north toward a village, east to a dark cave, and south to a shimmering lake.",
+      "name": "Dark Cellar",
+      "description": "Cold, damp air clings...",
       "exits": {
-        "north": "Village Outskirts",
-        "east": "Cave Entrance",
-        "south": "Lakeside"
+        "east": { "targetRoom": "Wine Rack Corner" },
+        "north": { "targetRoom": "Under the Stairs" }
       },
-      "items": ["shiny stone", "torch"]
+      "items": ["empty wine bottle"]
     },
     {
-      "name": "Cave Entrance",
-      "description": "The mouth of a shadowy cave yawns before you. A cool breeze carries the scent of earth and mystery. The forest lies west, and a narrow tunnel stretches north.",
+      "name": "Wine Rack Corner",
+      "description": "This corner holds a dusty, old wine rack...",
+      "items": ["rusty lever"],
       "exits": {
-        "west": "Forest Clearing",
-        "north": "Dark Tunnel"
+        "west": { "targetRoom": "Dark Cellar" }
+      }
+    },
+    {
+      "name": "Under the Stairs",
+      "description": "Directly beneath the rickety wooden staircase...",
+      "items": ["sturdy plank"],
+      "exits": {
+        "south": { "targetRoom": "Dark Cellar" },
+        "north": { "targetRoom": "Gate Control Area" }
+      }
+    },
+    {
+      "name": "Gate Control Area",
+      "description": "You are in a small, cramped area near the base of the main stairs. A heavy iron gate blocks passage north. There's a mechanism on the wall here with an empty slot.",
+      "items": ["lever slot"],
+      "exits": {
+        "north": {
+          "targetRoom": "Upstairs Landing",
+          "conditions": {
+            "requiresItem": "gate locked",
+            "failMessage": "The heavy iron gate to the north is securely locked. It seems operated by the nearby lever mechanism."
+          }
+        },
+        "south": { "targetRoom": "Under the Stairs" }
+      }
+    },
+    {
+      "name": "Upstairs Landing",
+      "description": "You've passed the gate and reached the landing...",
+      "exits": {
+        "south": { "targetRoom": "Gate Control Area" }
       },
       "items": []
-    },
-    {
-      "name": "Dark Tunnel",
-      "description": "The tunnel is damp and cold. The walls glisten with moisture, and faint echoes of dripping water fill the silence. A weak glow flickers further north.",
-      "exits": {
-        "south": "Cave Entrance",
-        "north": "Underground Chamber"
-      },
-      "items": ["old map"]
-    },
-    {
-      "name": "Underground Chamber",
-      "description": "A vast chamber with walls carved by ancient hands. Moss covers the stone, and a locked iron door stands to the east.",
-      "exits": {
-        "south": "Dark Tunnel",
-        "east": "Hidden Vault"
-      },
-      "items": ["rusty key", "rusty chest", "small key"]
-    },
-    {
-      "name": "Hidden Vault",
-      "description": "A secret vault glows with torchlight. Chests of gold and relics line the walls, though some look recently disturbed. The only way out is west.",
-      "exits": {
-        "west": "Underground Chamber"
-      },
-      "items": ["golden crown", "ancient tome"]
-    },
-    {
-      "name": "Village Outskirts",
-      "description": "A quiet dirt path leads into a small farming village. Wheat fields stretch as far as the eye can see. To the south is the forest, and east lies the bustling market.",
-      "exits": {
-        "south": "Forest Clearing",
-        "east": "Village Market"
-      },
-      "items": ["health potion"]
-    },
-    {
-      "name": "Village Market",
-      "description": "Merchants shout their wares from colorful stalls. The scent of baked bread and roasted meat fills the air. A forge glows to the north, and the outskirts lie west.",
-      "exits": {
-        "north": "Blacksmith Forge",
-        "west": "Village Outskirts"
-      },
-      "items": []
-    },
-    {
-      "name": "Blacksmith Forge",
-      "description": "The forge crackles with heat. Sparks fly as the blacksmith hammers steel. Tools hang from the walls, and a silver blade rests on the anvil.",
-      "exits": {
-        "south": "Village Market"
-      },
-      "items": ["silver sword"]
-    },
-    {
-      "name": "Lakeside",
-      "description": "You arrive at a tranquil lake. The water shimmers with reflections of clouds. A small wooden dock stretches into the water, and a boat rocks gently. Paths lead north and east.",
-      "exits": {
-        "north": "Forest Clearing",
-        "east": "Ancient Ruins"
-      },
-      "items": ["fishing rod"]
-    },
-    {
-      "name": "Ancient Ruins",
-      "description": "Crumbling stone pillars and broken statues mark this place of ancient worship. A staircase spirals downward into darkness.",
-      "exits": {
-        "west": "Lakeside",
-        "down": "Sunken Catacombs"
-      },
-      "items": ["rope"]
-    },
-    {
-      "name": "Sunken Catacombs",
-      "description": "You find yourself in torch-lit tunnels beneath the ruins. Bones and offerings line the walls. A narrow passage leads east.",
-      "exits": {
-        "up": "Ancient Ruins",
-        "east": "Forgotten Shrine"
-      },
-      "items": []
-    },
-    {
-      "name": "Forgotten Shrine",
-      "description": "An eerie shrine filled with candles that never seem to burn out. A golden statue watches you silently. The only way out is west.",
-      "exits": {
-        "west": "Sunken Catacombs"
-      },
-      "items": ["emerald amulet"]
-    },
-    {
-      "name": "Wizard Tower Base",
-      "description": "A tall, crumbling tower stands before you. Ivy crawls up its sides. The heavy wooden door is ajar, revealing a spiral staircase.",
-      "exits": {
-        "up": "Wizard Tower Library"
-      },
-      "items": []
-    },
-    {
-      "name": "Wizard Tower Library",
-      "description": "Shelves overflow with books, scrolls, and strange artifacts. The scent of old parchment fills the air. A ladder leads up.",
-      "exits": {
-        "down": "Wizard Tower Base",
-        "up": "Observatory"
-      },
-      "items": ["ancient tome"]
-    },
-    {
-      "name": "Observatory",
-      "description": "At the tower’s peak, shattered glass panels reveal the night sky. Strange brass devices track the stars. You sense the power of forgotten magic here.",
-      "exits": {
-        "down": "Wizard Tower Library"
-      },
-      "items": ["crystal orb"]
     }
   ]
 }
