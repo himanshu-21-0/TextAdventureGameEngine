@@ -7,6 +7,8 @@ import com.textadventure.model.Item.Usability;
 import com.textadventure.engine.GameLoader;
 import com.textadventure.engine.GameLoader.GameDataException;
 import com.textadventure.utils.SaveState;
+import com.textadventure.model.ExitData;
+import com.textadventure.model.Conditions;
 
 import com.google.gson.JsonSyntaxException;
 
@@ -91,6 +93,76 @@ public class Game {
         System.out.println("----------------------------------------");
     }
 
+    private boolean checkConditions(Conditions conditions, Player player) {
+        if (conditions == null) {
+            return true;
+        }
+
+        Object requiredItemsObj = conditions.getRequiresItem();
+
+        if (requiredItemsObj instanceof String) {
+            String requiredItemName = (String) requiredItemsObj;
+            if (player.findItemInventory(requiredItemName).isEmpty()) {
+                System.out.println("[Debug Cond] Failed: Missing required item '" + requiredItemName + "'"); // Debug
+                return false;
+            }
+            System.out.println("[Debug Cond] Passed: Found required item '" + requiredItemName + "'"); // Debug
+        } else if (requiredItemsObj instanceof List) {
+            @SuppressWarnings("unchecked") // Safe cast after instanceof check
+            List<String> requiredItemNames = (List<String>) requiredItemsObj;
+
+            if (requiredItemNames.isEmpty()) {
+                System.out.println("[Debug Cond] Passed: requiresItem list is empty.");
+                return true;
+            }
+
+            for (String requiredItemName : requiredItemNames) {
+                if (player.findItemInventory(requiredItemName).isEmpty()) {
+                    System.out.println(
+                            "[Debug Cond] Failed: Missing required item '" + requiredItemName + "' from list."); // Debug
+                    return false;
+                }
+            }
+            System.out.println("[Debug Cond] Passed: Found all items in requiresItem list."); // Debug
+        } else if (requiredItemsObj != null) {
+            System.err
+                    .println("[WARN Cond] Unexpected type for requiresItem: " + requiredItemsObj.getClass().getName());
+            return false;
+        }
+        return true;
+    }
+
+    private void displayRoomInfo() {
+        Room currentRoom = getCurrentRoom();
+        if (currentRoom == null) {
+            System.out.println("You seem to be floating in the void..."); // Should not happen in normal play
+            return;
+        }
+
+        System.out.println("\n--------------------");
+        System.out.println(currentRoom.getName());
+        System.out.println("--------------------");
+        System.out.println(currentRoom.getDescription());
+
+        List<Item> itemsInRoom = currentRoom.getItems();
+        if (!itemsInRoom.isEmpty()) {
+            System.out.println("\nYou see here:");
+            for (Item item : itemsInRoom) {
+                System.out.println("- " + item.getName());
+            }
+        }
+
+        Map<String, ExitData> exits = currentRoom.getExit();
+        if (!exits.isEmpty()) {
+            System.out.println("\nObvious exits:");
+            String exitDirections = String.join(", ", exits.keySet());
+            System.out.println("- " + exitDirections);
+        } else {
+            System.out.println("\nThere are no obvious exits.");
+        }
+        System.out.println("--------------------");
+    }
+
     public Room getRoom(String roomName) {
         if (this.rooms == null) {
             System.err.println(
@@ -153,11 +225,26 @@ public class Game {
                     System.out.println("[Game.processCommand] Current room is: '" + currentRoom.getName() + "'");
 
                     Map<String, String> exits = currentRoom.getExits();
+                    Map<String, ExitData> exitsMap = currentRoom.getExit();
+                    ExitData exitData = exitsMap.get(direction);
 
-                    if (exits == null) {
+                    if (exitData == null) {
                         System.err.println("[Game.processCommand] Error: Room '" + currentRoom.getName()
                                 + "' has a null exits map!");
                         System.out.println("There seem to be no exit from here.");
+                        break;
+                    }
+
+                    Conditions conditions = exitData.getConditions();
+                    boolean conditionsMet = checkConditions(conditions, player);
+
+                    if (!conditionsMet) {
+                        String failMessage = (conditions != null) ? conditions.getFailMessage() : null;
+                        if (failMessage != null && !failMessage.isBlank()) {
+                            System.out.println(failMessage);
+                        } else {
+                            System.out.println("Something prevents you from going " + direction + ".");
+                        }
                         break;
                     }
 
@@ -190,6 +277,7 @@ public class Game {
                 break;
             case "look":
                 System.out.println("You look around");
+                displayRoomInfo();
                 break;
             case "inventory":
             case "inv":

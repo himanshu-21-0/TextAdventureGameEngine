@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Optional;
 
 public class Room {
+    private Map<String,ExitData> exit; //exits
     private String name;
     private String description;
     private Map<String, String> exits;
@@ -40,6 +41,10 @@ public class Room {
 
     public Map<String, String> getExits() {
         return this.exits;
+    }
+
+    public Map<String, ExitData> getExit() { // getExits
+        return exit;
     }
 
     public List<Item> getItems() {
