@@ -3,6 +3,7 @@ package com.textadventure.game;
 import com.textadventure.model.Room;
 import com.textadventure.model.Player;
 import com.textadventure.model.Item;
+import com.textadventure.model.Item.Usability;
 import com.textadventure.engine.GameLoader;
 import com.textadventure.engine.GameLoader.GameDataException;
 import com.textadventure.utils.SaveState;
@@ -18,6 +19,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.List;
 import java.util.ArrayList;
@@ -356,6 +358,87 @@ public class Game {
                     System.out.println("Failed to save game.");
                 }
 
+                break;
+            case "use":
+                if (player == null || rooms == null || allGameItems == null) {
+                    System.err.println("[Game.processCommand] ERROR: Cannot execute '" + commandVerb
+                            + "'. Game not fully initialized or loaded.");
+                    System.out.println("The game needs to be initialized or loaded first.");
+                    break;
+                } else if (commandVerb.equals("use")) {
+                    String itemName = null;
+                    String targetName = null;
+                    int separatorIndex = -1;
+
+                    for (int i = 1; i < commandParts.length - 1; i++) {
+                        if (commandParts[i].equalsIgnoreCase("on")) {
+                            separatorIndex = i;
+                            break;
+                        }
+                    }
+
+                    if (separatorIndex == -1 || separatorIndex == 1 || separatorIndex == commandParts.length - 1) {
+                        System.out.println("How do you want to use that? Try 'use <item> on <target>'.");
+                        break;
+                    }
+                    itemName = String.join(" ", Arrays.copyOfRange(commandParts, 1, separatorIndex));
+                    targetName = String.join(" ",
+                            Arrays.copyOfRange(commandParts, separatorIndex + 1, commandParts.length));
+
+                    System.out.println("[Debug Use] Item: '" + itemName + "', Target: '" + targetName + "'");
+
+                    Optional<Item> itemToUseOpt = player.findItemInventory(itemName);
+                    if (itemToUseOpt.isEmpty()) {
+                        System.out.println("You don't have a '" + itemName + "'.");
+                        break;
+                    }
+                    Item itemToUse = itemToUseOpt.get();
+                    Usability usability = itemToUse.getUsability();
+                    if (usability == null) {
+                        System.out.println(
+                                "You can't figure out how to use the " + itemToUse.getName() + " in that way.");
+                        break;
+                    }
+                    String requiredTarget = usability.getTarget();
+                    if (requiredTarget == null || !targetName.equalsIgnoreCase(requiredTarget)) {
+                        if (requiredTarget != null) {
+                            System.out.println("You can't use the " + itemToUse.getName() + " on the " + targetName
+                                    + ". Maybe try using it on the " + requiredTarget + "?");
+                        } else {
+                            System.out.println(
+                                    "The " + itemToUse.getName() + " isn't meant to be used on things directly.");
+                        }
+                        break;
+                    }
+                    boolean targetPresent = false;
+                    Room currentRoom = getCurrentRoom();
+
+                    if (targetName.equalsIgnoreCase("self")) {
+                    } else if (currentRoom != null) {
+                        targetPresent = currentRoom.findItemByName(targetName).isPresent();
+                    }
+
+                    if (!targetPresent) {
+                        System.out.println(
+                                "You don't see a '" + targetName + "' here to use the " + itemToUse.getName() + " on.");
+                        break;
+                    }
+
+                    System.out.println("[Debug Use] All checks passed for using '" + itemToUse.getName() + "' on '"
+                            + targetName + "'"); // Debug
+
+                    if (usability.getEffectDescription() != null && !usability.getEffectDescription().isBlank()) {
+                        System.out.println(usability.getEffectDescription());
+                    } else {
+                        System.out.println("You use the " + itemToUse.getName() + " on the " + targetName + ".");
+                    }
+
+                    if (usability.isConsumesItem()) {
+                        System.out.println("[Debug Use] Consuming item: " + itemToUse.getName());
+                        player.dropItem(itemToUse.getName());
+                    }
+
+                }
                 break;
             case "load":
                 System.out.println("Attempting to load game state from " + SAVE_FILE_NAME + "...");

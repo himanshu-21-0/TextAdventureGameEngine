@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class Room {
     private String name;
@@ -64,5 +65,16 @@ public class Room {
         String trimmedDestination = destinationRoomName.trim();
 
         this.exits.put(normalizedDirection, trimmedDestination);
+    }
+
+    public Optional<Item> findItemByName(String itemName) {
+        if (this.items == null)
+            return Optional.empty();
+        for (Item item : this.items) {
+            if (item.getName().equalsIgnoreCase(itemName)) {
+                return Optional.of(item);
+            }
+        }
+        return Optional.empty();
     }
 }

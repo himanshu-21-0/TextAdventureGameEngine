@@ -1,7 +1,9 @@
 package com.textadventure.model;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class Player {
     private String currentRoomName;
@@ -44,5 +46,27 @@ public class Player {
             throw new IllegalArgumentException("Cannot set current room name to null or empty.");
 
         this.currentRoomName = newRoomName.trim();
+    }
+
+    public Optional<Item> findItemInventory(String itemName) {
+        for (Item item : inventory) {
+            if (item.getName().equalsIgnoreCase(itemName)) {
+                return Optional.of(item);
+            }
+        }
+        return Optional.empty();
+    }
+
+    public boolean dropItem(String itemName) {
+        Iterator<Item> iterator = inventory.iterator();
+        while (iterator.hasNext()) {
+            Item item = iterator.next();
+            if (item.getName().equalsIgnoreCase(itemName)) {
+                iterator.remove();
+                System.out.println("[Player Debug] Dropped/Removed '" + itemName + "' from inventory.");
+                return true;
+            }
+        }
+        return false;
     }
 }
