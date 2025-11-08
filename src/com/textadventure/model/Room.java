@@ -33,6 +33,11 @@ public class Room {
         return this.description;
     }
 
+    public void setDescription(String newDescription) {
+        this.description = newDescription;
+        System.out.println("[Room Debug] Description for room '" + this.name + "' changed."); // Debug
+    }
+
     public Map<String, String> getExits() {
         return this.exits;
     }
@@ -68,13 +73,19 @@ public class Room {
     }
 
     public Optional<Item> findItemByName(String itemName) {
-        if (this.items == null)
+        if (itemName == null || itemName.isBlank()) {
             return Optional.empty();
+        }
         for (Item item : this.items) {
             if (item.getName().equalsIgnoreCase(itemName)) {
                 return Optional.of(item);
             }
         }
         return Optional.empty();
+    }
+
+    public Item removeItem(String targetToRemove) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'removeItem'");
     }
 }

@@ -425,12 +425,71 @@ public class Game {
                     }
 
                     System.out.println("[Debug Use] All checks passed for using '" + itemToUse.getName() + "' on '"
-                            + targetName + "'"); 
+                            + targetName + "'");
 
                     if (usability.getEffectDescription() != null && !usability.getEffectDescription().isBlank()) {
                         System.out.println(usability.getEffectDescription());
                     } else {
                         System.out.println("You use the " + itemToUse.getName() + " on the " + targetName + ".");
+                    }
+
+                    Room currentRoomName = getCurrentRoom();
+
+                    String targetToRemove = usability.getRemovesTarget();
+                    if (targetToRemove != null && !targetToRemove.isBlank() && currentRoom != null) {
+                        Item removed = currentRoomName.removeItem(targetToRemove);
+                        if (removed != null) {
+                            System.out.println("The " + removed.getName() + " disappears.");
+                        } else {
+                            System.err.println("[WARN] Use Effect: Tried to remove target '" + targetToRemove
+                                    + "' but it wasn't found as an item in the room.");
+                        }
+                    }
+                    String targetToAdd = usability.getAddsTarget();
+                    if (targetToAdd != null && !targetToAdd.isBlank() && currentRoom != null) {
+                        Item itemDefinitionToAdd = allGameItems.get(targetToAdd.toLowerCase());
+                        if (itemDefinitionToAdd != null) {
+                            currentRoom.addItem(itemDefinitionToAdd);
+                            System.out.println("A " + itemDefinitionToAdd.getName() + " appears!");
+                        } else {
+                            System.err.println("[WARN] Use Effect: Tried to add target '" + targetToAdd
+                                    + "' but it wasn't defined in allGameItems.");
+                        }
+                    }
+
+                    String itemToAddToInventory = usability.getAddsItemToInventory();
+                    if (itemToAddToInventory != null && !itemToAddToInventory.isBlank()) {
+                        Item itemDefinitionForInv = allGameItems.get(itemToAddToInventory.toLowerCase());
+                        if (itemDefinitionForInv != null) {
+                            player.takeItem(itemDefinitionForInv);
+                            System.out.println("You acquire a " + itemDefinitionForInv.getName() + ".");
+                        } else {
+                            System.err.println("[WARN] Use Effect: Tried to add item '" + itemToAddToInventory
+                                    + "' to inventory but it wasn't defined in allGameItems.");
+                        }
+                    }
+
+                    String newDescription = usability.getChangesRoomDescriptionTo();
+                    if (newDescription != null && !newDescription.isBlank() && currentRoom != null) {
+                        currentRoom.setDescription(newDescription);
+                        System.out.println("The appearance of the room seems to change.");
+                    }
+
+                    String exitToUnlock = usability.getUnlocksExit();
+                    if (exitToUnlock != null && !exitToUnlock.isBlank()) {
+                        System.out.println("[INFO] Use Effect: Unlocking exit '" + exitToUnlock
+                                + "' is not fully implemented yet.");
+                    }
+
+                    if (usability.isConsumesItem()) {
+                        System.out.println("[Debug Use] Consuming item: " + itemToUse.getName());
+                        boolean removed = player.removeItem(itemToUse.getName());
+                        if (removed) {
+                            System.out.println("The " + itemToUse.getName() + " is used up.");
+                        } else {
+                            System.err.println("[WARN] Use Effect: Tried to consume item '" + itemToUse.getName()
+                                    + "' but it couldn't be removed from inventory.");
+                        }
                     }
 
                     if (usability.isConsumesItem()) {

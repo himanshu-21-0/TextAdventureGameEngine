@@ -49,6 +49,10 @@ public class Player {
     }
 
     public Optional<Item> findItemInventory(String itemName) {
+        if (itemName == null || itemName.isBlank()) {
+            return Optional.empty();
+        }
+
         for (Item item : inventory) {
             if (item.getName().equalsIgnoreCase(itemName)) {
                 return Optional.of(item);
@@ -68,5 +72,10 @@ public class Player {
             }
         }
         return false;
+    }
+
+    public boolean removeItem(String name) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'removeItem'");
     }
 }
