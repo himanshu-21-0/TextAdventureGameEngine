@@ -12,6 +12,16 @@ public class Conditions {
         return failMessage;
     }
 
+    public void setRequiresItem(Object requiresItem) {
+        this.requiresItem = requiresItem;
+        System.out.println("[Debug Cond Mod] requiresItem set to: " + requiresItem); // Debug
+    }
+
+    public void setFailMessage(String failMessage) {
+        this.failMessage = failMessage;
+        System.out.println("[Debug Cond Mod] failMessage set to: " + failMessage); // Debug
+    }
+
     public Conditions() {
     }
 }

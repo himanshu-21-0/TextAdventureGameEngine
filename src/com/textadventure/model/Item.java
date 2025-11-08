@@ -3,6 +3,7 @@ package com.textadventure.model;
 import java.util.List;
 
 public class Item {
+
     private String name;
     private String description;
     private List<String> items;
@@ -46,6 +47,7 @@ public class Item {
         private String addsTarget;
         private String changesRoomDescriptionTo;
         private String addsItemToInventory;
+        private ExitModification modifiesExit;
 
         public String getTarget() {
             return target;
@@ -53,6 +55,10 @@ public class Item {
 
         public String getEffectDescription() {
             return effectDescription;
+        }
+
+        public ExitModification getModifiesExit() {
+            return modifiesExit;
         }
 
         public boolean isConsumesItem() {
@@ -78,6 +84,8 @@ public class Item {
         public String getAddsItemToInventory() {
             return addsItemToInventory;
         }
+
+        public Usability() {}
 
     }
 
