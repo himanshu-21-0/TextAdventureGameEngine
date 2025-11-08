@@ -425,7 +425,7 @@ public class Game {
                     }
 
                     System.out.println("[Debug Use] All checks passed for using '" + itemToUse.getName() + "' on '"
-                            + targetName + "'"); // Debug
+                            + targetName + "'"); 
 
                     if (usability.getEffectDescription() != null && !usability.getEffectDescription().isBlank()) {
                         System.out.println(usability.getEffectDescription());
