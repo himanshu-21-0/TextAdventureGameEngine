@@ -9,6 +9,7 @@
         "effectDescription": "You slide the rusty lever into the slot. With a grating screech, you pull it downwards. A loud *CLUNK* echoes from another room!",
         "consumesItem": false,
         "modifiesExit": {
+          "room": "Gate Control Area",
           "direction": "north",
           "clearRequiresItem": true,
           "setFailMessage": "The northern gate groans open slightly."
@@ -23,7 +24,7 @@
   "rooms": [
     {
       "name": "Dark Cellar",
-      "description": "Cold, damp air clings...",
+      "description": "Cold, damp air clings to your skin. The dim light barely reveals a stone floor slick with moisture.",
       "exits": {
         "east": { "targetRoom": "Wine Rack Corner" },
         "north": { "targetRoom": "Under the Stairs" }
@@ -32,7 +33,7 @@
     },
     {
       "name": "Wine Rack Corner",
-      "description": "This corner holds a dusty, old wine rack...",
+      "description": "This corner holds a dusty, old wine rack. Some bottles remain, their labels long faded.",
       "items": ["rusty lever"],
       "exits": {
         "west": { "targetRoom": "Dark Cellar" }
@@ -40,7 +41,7 @@
     },
     {
       "name": "Under the Stairs",
-      "description": "Directly beneath the rickety wooden staircase...",
+      "description": "Directly beneath the rickety wooden staircase. Dust and cobwebs cover everything here.",
       "items": ["sturdy plank"],
       "exits": {
         "south": { "targetRoom": "Dark Cellar" },
@@ -53,8 +54,8 @@
       "items": ["lever slot"],
       "conditionalDescriptions": [
         {
-          "conditions": {},
-          "description": "You are in a small, cramped area... The heavy iron gate to the north stands slightly ajar. The lever in the mechanism beside it is now in the down position."
+          "conditions": { "hasUsedItemOnTarget": "rusty lever:lever slot" },
+          "description": "The heavy iron gate to the north stands slightly ajar. The lever in the mechanism beside it is now in the down position."
         }
       ],
       "exits": {
@@ -70,7 +71,7 @@
     },
     {
       "name": "Upstairs Landing",
-      "description": "You've passed the gate and reached the landing...",
+      "description": "You've passed the gate and reached the landing. A faint draft comes from the hallway ahead.",
       "exits": {
         "south": { "targetRoom": "Gate Control Area" }
       },
