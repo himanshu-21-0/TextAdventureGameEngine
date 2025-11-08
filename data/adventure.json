@@ -7,24 +7,26 @@
       "usability": {
         "target": "lever slot",
         "effectDescription": "You slide the rusty lever into the slot. With a grating screech, you pull it downwards. A loud *CLUNK* echoes from another room!",
-        "consumesItem": false,
-        "modifiesExit": {
-          "room": "Gate Control Area",
-          "direction": "north",
-          "clearRequiresItem": true,
-          "setFailMessage": "The northern gate groans open slightly."
-        }
+        "consumesItem": false
       }
     },
     {
       "name": "lever slot",
       "description": "A heavy-duty slot mechanism is embedded in the wall, missing its lever."
+    },
+    {
+      "name": "empty wine bottle",
+      "description": "An old glass bottle covered in dust. It's empty but sturdy enough to use as a blunt tool."
+    },
+    {
+      "name": "sturdy plank",
+      "description": "A solid wooden plank, slightly cracked but still strong enough to use for crossing gaps or as leverage."
     }
   ],
   "rooms": [
     {
       "name": "Dark Cellar",
-      "description": "Cold, damp air clings to your skin. The dim light barely reveals a stone floor slick with moisture.",
+      "description": "Cold, damp air clings to your skin. Shadows flicker along the stone walls.",
       "exits": {
         "east": "Wine Rack Corner",
         "north": "Under the Stairs"
@@ -33,7 +35,7 @@
     },
     {
       "name": "Wine Rack Corner",
-      "description": "This corner holds a dusty, old wine rack. Some bottles remain, their labels long faded.",
+      "description": "This corner holds a dusty, old wine rack filled with shattered bottles and cobwebs.",
       "items": ["rusty lever"],
       "exits": {
         "west": "Dark Cellar"
@@ -41,7 +43,7 @@
     },
     {
       "name": "Under the Stairs",
-      "description": "Directly beneath the rickety wooden staircase. Dust and cobwebs cover everything here.",
+      "description": "Directly beneath the rickety wooden staircase, the air is thick with dust and decay.",
       "items": ["sturdy plank"],
       "exits": {
         "south": "Dark Cellar",
@@ -50,14 +52,8 @@
     },
     {
       "name": "Gate Control Area",
-      "description": "You are in a small, cramped area near the base of the main stairs. A heavy iron gate blocks passage north. There's a mechanism on the wall here with an empty slot.",
+      "description": "You are in a small, cramped area near the base of the main stairs. A heavy iron gate blocks passage north.",
       "items": ["lever slot"],
-      "conditionalDescriptions": [
-        {
-          "conditions": { "hasUsedItemOnTarget": "rusty lever:lever slot" },
-          "description": "The heavy iron gate to the north stands slightly ajar. The lever in the mechanism beside it is now in the down position."
-        }
-      ],
       "exits": {
         "north": "Upstairs Landing",
         "south": "Under the Stairs"
@@ -65,7 +61,7 @@
     },
     {
       "name": "Upstairs Landing",
-      "description": "You've passed the gate and reached the landing. A faint draft comes from the hallway ahead.",
+      "description": "You've passed the gate and reached the landing. Dust motes float in the faint light from above.",
       "exits": {
         "south": "Gate Control Area"
       },
