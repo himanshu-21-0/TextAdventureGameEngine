@@ -1,71 +1,134 @@
 {
-  "playerStart": "Dark Cellar",
+  "_README_NOTE": "All item names (used in inventory, take, examine) and target names (used in 'use' command) are defined in Title Case for consistency. Commands are case-insensitive.",
+  "playerStart": "Rusty Boiler Room",
   "items": [
     {
-      "name": "rusty lever",
-      "description": "A heavy iron lever, coated in rust. Looks like it fits into some kind of mechanism.",
+      "name": "Sledgehammer",
+      "description": "A heavy, industrial hammer. Looks perfect for demolishing weak masonry.",
       "usability": {
-        "target": "lever slot",
-        "effectDescription": "You slide the rusty lever into the slot. With a grating screech, you pull it downwards. A loud *CLUNK* echoes from another room!",
-        "consumesItem": false
+        "target": "Weak Wall",
+        "effectDescription": "You swing the Sledgehammer with all your might against the weak spot. With a spray of dust and stone, the wall collapses, revealing a new passage!",
+        "consumesItem": false,
+        "removesTarget": "Weak Wall",
+        "addsTarget": "Rubble",
+        "modifiesExit": {
+          "direction": "south",
+          "clearRequiresItem": true
+        }
       }
     },
     {
-      "name": "lever slot",
-      "description": "A heavy-duty slot mechanism is embedded in the wall, missing its lever."
+      "name": "Rubble",
+      "description": "A pile of broken stone and dust. You can move past it, but it's not going anywhere."
     },
     {
-      "name": "empty wine bottle",
-      "description": "An old glass bottle covered in dust. It's empty but sturdy enough to use as a blunt tool."
+      "name": "Key Card",
+      "description": "A plastic security card, slightly scratched. It might grant access to restricted areas.",
+      "usability": null
     },
     {
-      "name": "sturdy plank",
-      "description": "A solid wooden plank, slightly cracked but still strong enough to use for crossing gaps or as leverage."
+      "name": "Crank",
+      "description": "A metal crank handle. It looks like it could fit into a mechanism.",
+      "usability": {
+        "target": "Crank Socket",
+        "effectDescription": "You insert the heavy metal Crank into the socket and turn it. A loud *CLANG* echoes, and a locking signal disengages. You remove the Crank.",
+        "consumesItem": false,
+        "modifiesExit": {
+          "direction": "north",
+          "clearRequiresItem": true
+        }
+      }
+    },
+    {
+      "name": "Weak Wall",
+      "description": "A section of the northern wall looks strangely thin and cracked. It might give way under heavy force."
+    },
+    {
+      "name": "Maintenance Log",
+      "description": "A dusty logbook detailing routine repairs. The last entry reads: 'Door to the Control Room requires card AND crank engagement.'"
+    },
+    {
+      "name": "Crank Socket",
+      "description": "A mechanism with a square socket, obviously designed for a heavy crank handle."
     }
   ],
   "rooms": [
     {
-      "name": "Dark Cellar",
-      "description": "Cold, damp air clings to your skin. Shadows flicker along the stone walls.",
+      "name": "Rusty Boiler Room",
+      "description": "The air is thick with the smell of old oil and rust. Massive, cold boilers line the walls. A small maintenance tunnel leads North.",
       "exits": {
-        "east": "Wine Rack Corner",
-        "north": "Under the Stairs"
+        "north": "Maintenance Tunnel"
       },
-      "items": ["empty wine bottle"]
+      "items": ["Sledgehammer"]
     },
     {
-      "name": "Wine Rack Corner",
-      "description": "This corner holds a dusty, old wine rack filled with shattered bottles and cobwebs.",
-      "items": ["rusty lever"],
+      "name": "Maintenance Tunnel",
+      "description": "A dark, cramped tunnel. It opens up into a larger, brighter area to the north. The floor is slick with water. To the south, you see the Weak Wall.",
       "exits": {
-        "west": "Dark Cellar"
-      }
+        "south": "Rusty Boiler Room",
+        "north": "Guard Post"
+      },
+      "items": ["Weak Wall"]
     },
     {
-      "name": "Under the Stairs",
-      "description": "Directly beneath the rickety wooden staircase, the air is thick with dust and decay.",
-      "items": ["sturdy plank"],
+      "name": "Guard Post",
+      "description": "This small, abandoned guard post has a desk, a deactivated security monitor, and a maintenance log lying open on the floor. A heavy door is to the East.",
       "exits": {
-        "south": "Dark Cellar",
-        "north": "Gate Control Area"
-      }
+        "south": "Maintenance Tunnel",
+        "east": "East Corridor"
+      },
+      "items": ["Maintenance Log", "Key Card"]
     },
     {
-      "name": "Gate Control Area",
-      "description": "You are in a small, cramped area near the base of the main stairs. A heavy iron gate blocks passage north.",
-      "items": ["lever slot"],
+      "name": "East Corridor",
+      "description": "A long, brightly lit corridor. To the north is a large, locked mechanical door labeled 'Control Room'. To the west, you see the Guard Post.",
       "exits": {
-        "north": "Upstairs Landing",
-        "south": "Under the Stairs"
-      }
-    },
-    {
-      "name": "Upstairs Landing",
-      "description": "You've passed the gate and reached the landing. Dust motes float in the faint light from above.",
-      "exits": {
-        "south": "Gate Control Area"
+        "west": "Guard Post",
+        "north": "Control Room",
+        "south": "South Passage"
+      },
+      "exitData": {
+        "north": {
+          "targetRoom": "Control Room",
+          "conditions": {
+            "requiresItem": ["Key Card", "Crank"],
+            "failMessage": "The door panel flashes red. You need the Key Card AND the signal from the crank mechanism to open this."
+          }
+        },
+        "south": {
+            "targetRoom": "South Passage",
+            "conditions": {
+                "requiresItem": "Rubble", 
+                "failMessage": "The way South is blocked by debris from a collapsed wall. You need to clear the rubble."
+            }
+        }
       },
       "items": []
+    },
+    {
+      "name": "Control Room",
+      "description": "You've made it! This room is filled with consoles and blinking lights. A clear victory. You can go back south.",
+      "exits": {
+        "south": "East Corridor"
+      },
+      "items": []
+    },
+    {
+      "name": "South Passage",
+      "description": "A damp, twisting passage that leads to the Old Workshop.",
+      "exits": {
+        "north": "East Corridor",
+        "south": "Old Workshop"
+      },
+      "items": []
+    },
+    {
+      "name": "Old Workshop",
+      "description": "This room is clearly an old workshop, filled with broken tools and forgotten machinery. A Crank Socket is set into the main wall.",
+      "exits": {
+        "north": "South Passage"
+      },
+      "items": ["Crank Socket", "Crank"]
     }
   ]
 }

@@ -1,43 +1,23 @@
 {
-  "playerLocation": "Forgotten Shrine",
+  "playerLocation": "East Corridor",
   "playerInventory": [
-    "fishing rod",
-    "rope",
-    "silver sword"
+    "Sledgehammer"
   ],
   "roomItemStates": {
-    "Forgotten Shrine": [],
-    "Village Outskirts": [
-      "health potion"
+    "Guard Post": [
+      "Maintenance Log",
+      "Key Card"
     ],
-    "Hidden Vault": [
-      "golden crown",
-      "ancient tome"
+    "Maintenance Tunnel": [],
+    "Old Workshop": [
+      "Crank Socket",
+      "Crank"
     ],
-    "Blacksmith Forge": [
-      "silver sword"
+    "East Corridor": [
+      "Weak Wall"
     ],
-    "Forest Clearing": [
-      "shiny stone",
-      "torch"
-    ],
-    "Village Market": [],
-    "Sunken Catacombs": [],
-    "Observatory": [
-      "golden crown"
-    ],
-    "Underground Chamber": [
-      "rusty key"
-    ],
-    "Ancient Ruins": [],
-    "Wizard Tower Base": [],
-    "Lakeside": [],
-    "Cave Entrance": [],
-    "Wizard Tower Library": [
-      "ancient tome"
-    ],
-    "Dark Tunnel": [
-      "old map"
-    ]
+    "Control Room": [],
+    "Rusty Boiler Room": [],
+    "South Passage": []
   }
 }
