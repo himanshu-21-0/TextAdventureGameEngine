@@ -1,13 +1,13 @@
 {
-  "_README_NOTE": "All item names (used in inventory, take, examine) and target names (used in 'use' command) are defined in Title Case for consistency. Commands are case-insensitive.",
-  "playerStart": "Rusty Boiler Room",
+  "_README": "Abandoned Research Facility: Escape Protocol Alpha\nAll names case-insensitive. Commands: go DIR, take ITEM, use ITEM on TARGET, examine ITEM, inv, save, load, quit.\nWin by reaching 'Surface Lab'.",
+  "playerStart": "Cryo Chamber",
   "items": [
     {
       "name": "Sledgehammer",
-      "description": "A heavy, industrial hammer. Looks perfect for demolishing weak masonry.",
+      "description": "Heavy industrial hammer for breaking weak structures.",
       "usability": {
         "target": "Weak Wall",
-        "effectDescription": "You swing the Sledgehammer with all your might against the weak spot. With a spray of dust and stone, the wall collapses, revealing a new passage!",
+        "effectDescription": "CRASH! The wall shatters, revealing rubble and a new path south.",
         "consumesItem": false,
         "removesTarget": "Weak Wall",
         "addsTarget": "Rubble",
@@ -19,19 +19,18 @@
     },
     {
       "name": "Rubble",
-      "description": "A pile of broken stone and dust. You can move past it, but it's not going anywhere."
+      "description": "Collapsed stone blocking the south passage."
     },
     {
       "name": "Key Card",
-      "description": "A plastic security card, slightly scratched. It might grant access to restricted areas.",
-      "usability": null
+      "description": "Level 3 security card for control doors."
     },
     {
       "name": "Crank",
-      "description": "A metal crank handle. It looks like it could fit into a mechanism.",
+      "description": "Rusty mechanical crank for valve mechanisms.",
       "usability": {
         "target": "Crank Socket",
-        "effectDescription": "You insert the heavy metal Crank into the socket and turn it. A loud *CLANG* echoes, and a locking signal disengages. You remove the Crank.",
+        "effectDescription": "You turn the crank. Gears grind, and the north door unlocks with a hiss.",
         "consumesItem": false,
         "modifiesExit": {
           "direction": "north",
@@ -41,29 +40,97 @@
     },
     {
       "name": "Weak Wall",
-      "description": "A section of the northern wall looks strangely thin and cracked. It might give way under heavy force."
+      "description": "Cracked concrete section in the Maintenance Tunnel."
     },
     {
       "name": "Maintenance Log",
-      "description": "A dusty logbook detailing routine repairs. The last entry reads: 'Door to the Control Room requires card AND crank engagement.'"
+      "description": "'Control Room requires Key Card AND crank signal. Power reroute via Chemical Lab.'"
     },
     {
       "name": "Crank Socket",
-      "description": "A mechanism with a square socket, obviously designed for a heavy crank handle."
+      "description": "Empty hexagonal socket in the workshop wall."
+    },
+    {
+      "name": "Battery",
+      "description": "High-voltage power cell, drained but salvageable.",
+      "usability": {
+        "target": "Power Panel",
+        "effectDescription": "Sparks fly! Power restored. A code note ejects: 'Elevator: ACID42'.",
+        "consumesItem": true,
+        "addsTarget": "Code Note"
+      }
+    },
+    {
+      "name": "Wire Cutters",
+      "description": "Insulated cutters for live wires."
+    },
+    {
+      "name": "Power Panel",
+      "description": "Flickering electrical panel. Needs power source."
+    },
+    {
+      "name": "Code Note",
+      "description": "Scribbled: 'Elevator override: ACID42'"
+    },
+    {
+      "name": "Acid Vial",
+      "description": "Concentrated hydrochloric acid in glass.",
+      "usability": {
+        "target": "Rusted Door",
+        "effectDescription": "The acid eats through the lock. Elevator Key drops out!",
+        "consumesItem": true,
+        "addsTarget": "Elevator Key",
+        "removesTarget": "Rusted Door"
+      }
+    },
+    {
+      "name": "Rusted Door",
+      "description": "Corroded metal door blocking elevator access."
+    },
+    {
+      "name": "Elevator Key",
+      "description": "Electronic key for surface elevator.",
+      "usability": {
+        "target": "Elevator Panel",
+        "effectDescription": "Elevator activates! Doors open to Surface Lab.",
+        "consumesItem": false,
+        "modifiesExit": {
+          "direction": "up",
+          "clearRequiresItem": true
+        }
+      }
     }
   ],
   "rooms": [
     {
-      "name": "Rusty Boiler Room",
-      "description": "The air is thick with the smell of old oil and rust. Massive, cold boilers line the walls. A small maintenance tunnel leads North.",
+      "name": "Cryo Chamber",
+      "description": "Frozen pods line the walls. Emergency lights flash. East to Boiler Room, West locked.",
       "exits": {
+        "east": "Rusty Boiler Room"
+      },
+      "exitData": {
+        "west": {
+          "targetRoom": "Power Room",
+          "conditions": {
+            "requiresItem": "Battery",
+            "failMessage": "Power insufficient. Need battery."
+          }
+        }
+      },
+      "items": []
+    },
+    {
+      "name": "Rusty Boiler Room",
+      "description": "Rusted machinery hums faintly. North tunnel visible.",
+      "exits": {
+        "west": "Cryo Chamber",
         "north": "Maintenance Tunnel"
       },
       "items": ["Sledgehammer"]
     },
     {
       "name": "Maintenance Tunnel",
-      "description": "A dark, cramped tunnel. It opens up into a larger, brighter area to the north. The floor is slick with water. To the south, you see the Weak Wall.",
+      "description": "Narrow, dripping corridor. Weak Wall south, Guard Post north.",
       "exits": {
         "south": "Rusty Boiler Room",
         "north": "Guard Post"
@@ -72,7 +139,7 @@
     },
     {
       "name": "Guard Post",
-      "description": "This small, abandoned guard post has a desk, a deactivated security monitor, and a maintenance log lying open on the floor. A heavy door is to the East.",
+      "description": "Desk with open log. East to Corridor.",
       "exits": {
         "south": "Maintenance Tunnel",
         "east": "East Corridor"
@@ -81,10 +148,9 @@
     },
     {
       "name": "East Corridor",
-      "description": "A long, brightly lit corridor. To the north is a large, locked mechanical door labeled 'Control Room'. To the west, you see the Guard Post.",
+      "description": "Bright hall. North: Control Room (locked). South blocked. West: Guard Post.",
       "exits": {
         "west": "Guard Post",
-        "north": "Control Room",
         "south": "South Passage"
       },
       "exitData": {
@@ -92,22 +158,22 @@
           "targetRoom": "Control Room",
           "conditions": {
             "requiresItem": ["Key Card", "Crank"],
-            "failMessage": "The door panel flashes red. You need the Key Card AND the signal from the crank mechanism to open this."
+            "failMessage": "Dual auth required: Key Card AND crank signal."
           }
         },
         "south": {
-            "targetRoom": "South Passage",
-            "conditions": {
-                "requiresItem": "Rubble", 
-                "failMessage": "The way South is blocked by debris from a collapsed wall. You need to clear the rubble."
-            }
+          "targetRoom": "South Passage",
+          "conditions": {
+            "requiresItem": "Rubble",
+            "failMessage": "Path blocked by rubble."
+          }
         }
       },
       "items": []
     },
     {
       "name": "Control Room",
-      "description": "You've made it! This room is filled with consoles and blinking lights. A clear victory. You can go back south.",
+      "description": "Consoles flicker. 'Power reroute failed. Check Chemical Lab.' South back.",
       "exits": {
         "south": "East Corridor"
       },
@@ -115,7 +181,7 @@
     },
     {
       "name": "South Passage",
-      "description": "A damp, twisting passage that leads to the Old Workshop.",
+      "description": "Twisting vent. South to Workshop, North Corridor.",
       "exits": {
         "north": "East Corridor",
         "south": "Old Workshop"
@@ -124,11 +190,33 @@
     },
     {
       "name": "Old Workshop",
-      "description": "This room is clearly an old workshop, filled with broken tools and forgotten machinery. A Crank Socket is set into the main wall.",
+      "description": "Tools scattered. Crank Socket in wall.",
       "exits": {
         "north": "South Passage"
       },
-      "items": ["Crank Socket", "Crank"]
+      "items": ["Crank Socket", "Crank", "Wire Cutters"]
+    },
+    {
+      "name": "Chemical Lab",
+      "description": "Vials and fume hoods. East locked (Rusted Door).",
+      "exits": {
+        "west": "Control Room"
+      },
+      "items": ["Acid Vial"]
+    },
+    {
+      "name": "Power Room",
+      "description": "Generators silent. Panel needs fixing.",
+      "exits": {
+        "east": "Cryo Chamber"
+      },
+      "items": ["Power Panel", "Battery"]
+    },
+    {
+      "name": "Surface Lab",
+      "description": "Fresh air! You've escaped! Victory!",
+      "exits": {},
+      "items": []
     }
   ]
 }

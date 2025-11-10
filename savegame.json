@@ -1,22 +1,29 @@
 {
-  "playerLocation": "East Corridor",
+  "playerLocation": "Rusty Boiler Room",
   "playerInventory": [
-    "Sledgehammer"
+    "Sledgehammer",
+    "Rubble",
+    "Maintenance Log",
+    "Key Card",
+    "Wire Cutters",
+    "Crank",
+    "Crank Socket"
   ],
   "roomItemStates": {
-    "Guard Post": [
-      "Maintenance Log",
-      "Key Card"
+    "Guard Post": [],
+    "Chemical Lab": [
+      "Acid Vial"
     ],
+    "Cryo Chamber": [],
     "Maintenance Tunnel": [],
-    "Old Workshop": [
-      "Crank Socket",
-      "Crank"
+    "Power Room": [
+      "Power Panel",
+      "Battery"
     ],
-    "East Corridor": [
-      "Weak Wall"
-    ],
+    "Old Workshop": [],
+    "East Corridor": [],
     "Control Room": [],
+    "Surface Lab": [],
     "Rusty Boiler Room": [],
     "South Passage": []
   }
