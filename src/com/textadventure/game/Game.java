@@ -1,35 +1,17 @@
 package com.textadventure.game;
 
-import com.textadventure.model.Room;
-import com.textadventure.model.Player;
-import com.textadventure.model.Item;
-import com.textadventure.model.Item.Usability;
+import com.textadventure.model.*;
 import com.textadventure.engine.GameLoader;
 import com.textadventure.engine.GameLoader.GameDataException;
 import com.textadventure.utils.SaveState;
-import com.textadventure.model.ExitData;
-import com.textadventure.model.Conditions;
-import com.textadventure.model.ConditionalDescription;
-import com.textadventure.model.ExitModification;
-
-import com.google.gson.JsonSyntaxException;
-
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.util.Map;
-import java.util.Optional;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.*;
 import java.util.stream.Collectors;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.HashMap;
 
 public class Game {
     private Map<String, Room> rooms;
@@ -44,7 +26,7 @@ public class Game {
     }
 
     public void initialize(String dataFilePath)
-            throws IOException, JsonSyntaxException, GameDataException, IllegalArgumentException {
+            throws IOException, com.google.gson.JsonSyntaxException, GameDataException, IllegalArgumentException {
         System.out.println("----------------------------------------");
         System.out.println("Initializing game from data file: " + dataFilePath + "...");
         System.out.println("----------------------------------------");
@@ -69,7 +51,6 @@ public class Game {
         this.allGameItems = gameLoader.getLoadedItems();
         if (this.allGameItems == null) {
             throw new GameDataException("Initialization failed: Could not load item definitions.");
-
         }
         System.out.println("[Game.initialize] Rooms loaded: " + this.rooms.keySet());
         System.out.println("[Game.initialize] All game items loaded: " + this.allGameItems.keySet());
@@ -95,6 +76,279 @@ public class Game {
         System.out.println("----------------------------------------");
     }
 
+    public Room getCurrentRoom() {
+        return rooms.get(player.getCurrentRoomName());
+    }
+
+    public void processCommand(String[] commandParts) {
+        if (commandParts.length == 0) return;
+
+        String commandVerb = commandParts[0].toLowerCase();
+
+        switch (commandVerb) {
+            case "go" -> processGoCommand(commandParts);
+            case "take" -> processTakeCommand(commandParts);
+            case "inventory", "inv" -> processInventoryCommand();
+            case "examine", "x" -> processExamineCommand(commandParts);
+            case "use" -> processUseCommand(commandParts);
+            case "look" -> processLookCommand();
+            case "save" -> processSaveCommand();
+            case "load" -> processLoadCommand();
+            case "quit", "exit" -> System.exit(0);
+            default -> {
+                System.out.println("Sorry, I don't understand the command '" + commandVerb + "'.");
+                System.out.println("Try one of these: go, look, take, inventory (inv), examine (x), use, save, load, quit");
+            }
+        }
+        System.out.println();
+    }
+
+    private void processGoCommand(String[] parts) {
+        if (parts.length < 2) {
+            System.out.println("Go where?");
+            return;
+        }
+        String direction = parts[1].toLowerCase();
+        Room current = getCurrentRoom();
+        ExitData exitData = current.getExit().get(direction);
+
+        if (exitData == null) {
+            System.out.println("You can't go " + direction + " from here.");
+            return;
+        }
+
+        if (!checkConditions(exitData.getConditions(), player)) {
+            return;
+        }
+
+        String targetRoom = exitData.getTargetRoom();
+        if (targetRoom == null || !rooms.containsKey(targetRoom)) {
+            System.out.println("Error: Invalid exit destination.");
+            return;
+        }
+
+        player.setCurrentRoomName(targetRoom);
+        System.out.println("You move " + direction + " to " + getCurrentRoom().getName() + ".");
+        processLookCommand();
+    }
+
+    private void processTakeCommand(String[] parts) {
+        if (parts.length < 2) {
+            System.out.println("Take what?");
+            return;
+        }
+        String itemName = String.join(" ", Arrays.copyOfRange(parts, 1, parts.length));
+        Room current = getCurrentRoom();
+        Optional<Item> optItem = current.findItemByName(itemName);
+        if (optItem.isEmpty()) {
+            System.out.println("There is no '" + itemName + "' here.");
+            return;
+        }
+        Item item = optItem.get();
+        current.getItems().remove(item);
+        player.takeItem(item);
+        System.out.println("You take the " + item.getName() + ".");
+    }
+
+    private void processInventoryCommand() {
+        List<Item> inv = player.getInventory();
+        if (inv.isEmpty()) {
+            System.out.println("Your inventory is empty.");
+        } else {
+            String items = inv.stream().map(Item::getName).collect(Collectors.joining(", "));
+            System.out.println("You are carrying: " + items);
+        }
+    }
+
+    private void processExamineCommand(String[] parts) {
+        if (parts.length < 2) {
+            System.out.println("Examine what?");
+            return;
+        }
+        String target = String.join(" ", Arrays.copyOfRange(parts, 1, parts.length));
+        Optional<Item> invItem = player.findItemInventory(target);
+        if (invItem.isPresent()) {
+            System.out.println(invItem.get().getDescription());
+            return;
+        }
+        Optional<Item> roomItem = getCurrentRoom().findItemByName(target);
+        if (roomItem.isPresent()) {
+            System.out.println(roomItem.get().getDescription());
+            return;
+        }
+        System.out.println("There is no '" + target + "' to examine.");
+    }
+
+    private void processUseCommand(String[] parts) {
+        if (parts.length < 4 || !parts[2].equalsIgnoreCase("on")) {
+            System.out.println("Usage: use <item> on <target>");
+            return;
+        }
+        String itemName = parts[1];
+        String targetName = String.join(" ", Arrays.copyOfRange(parts, 3, parts.length));
+
+        Optional<Item> optItem = player.findItemInventory(itemName);
+        if (optItem.isEmpty()) {
+            System.out.println("You don't have a '" + itemName + "'.");
+            return;
+        }
+        Item item = optItem.get();
+        Item.Usability usability = item.getUsability();
+        if (usability == null || !targetName.equalsIgnoreCase(usability.getTarget())) {
+            System.out.println("You can't use the " + item.getName() + " on that.");
+            return;
+        }
+
+        Room current = getCurrentRoom();
+        Optional<Item> optTarget = current.findItemByName(targetName);
+        if (optTarget.isEmpty()) {
+            System.out.println("There is no '" + targetName + "' here.");
+            return;
+        }
+
+        System.out.println(usability.getEffectDescription());
+
+        // Apply effects
+        if (usability.getRemovesTarget() != null) {
+            current.findItemByName(usability.getRemovesTarget()).ifPresent(current::removeItem);
+        }
+        if (usability.getAddsTarget() != null) {
+            Item newItem = allGameItems.get(usability.getAddsTarget());
+            if (newItem != null) current.addItem(newItem);
+        }
+        if (usability.getChangesRoomDescriptionTo() != null) {
+            current.setDescription(usability.getChangesRoomDescriptionTo());
+        }
+        if (usability.getAddsItemToInventory() != null) {
+            Item addItem = allGameItems.get(usability.getAddsItemToInventory());
+            if (addItem != null) player.takeItem(addItem);
+        }
+        if (usability.isConsumesItem()) {
+            player.removeItem(item.getName());
+        }
+        if (usability.getModifiesExit() != null) {
+            ExitModification mod = usability.getModifiesExit();
+            ExitData ed = current.getExit().get(mod.getDirection());
+            if (ed != null && ed.getConditions() != null && mod.isClearRequiresItem()) {
+                ed.getConditions().setRequiresItem(null);
+                System.out.println("The exit to the " + mod.getDirection() + " is now open.");
+            }
+        }
+    }
+
+    private void processLookCommand() {
+        Room room = getCurrentRoom();
+        System.out.println("\n" + room.getName());
+        System.out.println(room.getDescription());
+
+        List<Item> items = room.getItems();
+        if (!items.isEmpty()) {
+            String list = items.stream().map(Item::getName).collect(Collectors.joining(", "));
+            System.out.println("You see: " + list);
+        }
+
+        Map<String, ExitData> exits = room.getExit();
+        if (!exits.isEmpty()) {
+            String dirs = exits.keySet().stream().sorted().collect(Collectors.joining(" "));
+            System.out.println("Exits: " + dirs);
+        }
+    }
+
+    private void processSaveCommand() {
+        SaveState state = new SaveState(
+            player.getCurrentRoomName(),
+            player.getInventory().stream().map(Item::getName).toList(),
+            new HashMap<>()
+        );
+        for (Map.Entry<String, Room> entry : rooms.entrySet()) {
+            List<String> roomItems = entry.getValue().getItems().stream().map(Item::getName).toList();
+            state.getRoomItemStates().put(entry.getKey(), roomItems);
+        }
+        try (FileWriter writer = new FileWriter(SAVE_FILE_NAME)) {
+            new GsonBuilder().setPrettyPrinting().create().toJson(state, writer);
+            System.out.println("Game saved to " + SAVE_FILE_NAME);
+        } catch (IOException e) {
+            System.out.println("Failed to save game: " + e.getMessage());
+        }
+    }
+
+    private void processLoadCommand() {
+        try (FileReader reader = new FileReader(SAVE_FILE_NAME)) {
+            SaveState loadedState = new Gson().fromJson(reader, SaveState.class);
+            if (loadedState == null) {
+                System.out.println("No saved game found.");
+                return;
+            }
+
+            if (player == null) {
+                player = new Player();
+                System.out.println("[Debug] Player object was null, created a new one for loading.");
+            }
+
+            if (rooms == null) {
+                System.err.println("ERROR: Cannot apply loaded state, game rooms are not initialized.");
+                return;
+            }
+
+            String loadedLocation = loadedState.getPlayerLocation();
+            if (loadedLocation != null && rooms.containsKey(loadedLocation)) {
+                player.setCurrentRoomName(loadedLocation);
+                System.out.println("[Debug] Player location set to: " + loadedLocation);
+            } else {
+                System.err.println("WARNING: Loaded location '" + loadedLocation + "' is invalid. Player location not updated.");
+            }
+
+            List<String> loadedInvNames = loadedState.getPlayerInventory();
+            if (loadedInvNames != null) {
+                player.getInventory().clear();
+                System.out.println("[Debug] Player inventory cleared.");
+                for (String itemName : loadedInvNames) {
+                    Item item = allGameItems.get(itemName);
+                    if (item != null) {
+                        player.takeItem(item);
+                        System.out.println("[Debug] Added '" + itemName + "' to player inventory.");
+                    } else {
+                        System.err.println("WARNING: Unknown item '" + itemName + "' in saved inventory. Skipping.");
+                    }
+                }
+            } else {
+                System.err.println("WARNING: Saved inventory data is missing.");
+                player.getInventory().clear();
+            }
+
+            Map<String, List<String>> loadedRoomStates = loadedState.getRoomItemStates();
+            if (loadedRoomStates != null) {
+                for (Map.Entry<String, Room> roomEntry : rooms.entrySet()) {
+                    String roomName = roomEntry.getKey();
+                    Room room = roomEntry.getValue();
+                    if (room == null) continue;
+
+                    List<String> itemNamesForThisRoom = loadedRoomStates.get(roomName);
+                    room.getItems().clear();
+                    System.out.println("[Debug] Cleared items for room: " + roomName);
+
+                    if (itemNamesForThisRoom != null) {
+                        for (String itemName : itemNamesForThisRoom) {
+                            Item item = allGameItems.get(itemName);
+                            if (item != null) {
+                                room.addItem(item);
+                                System.out.println("[Debug] Added '" + itemName + "' back to room '" + roomName + "'.");
+                            } else {
+                                System.err.println("WARNING: Unknown item '" + itemName + "' in saved state for room '" + roomName + "'. Skipping.");
+                            }
+                        }
+                    }
+                }
+            } else {
+                System.err.println("WARNING: Saved room item state data is missing.");
+            }
+
+            System.out.println("Game loaded successfully!");
+        } catch (IOException e) {
+            System.out.println("Failed to load game: " + e.getMessage());
+        }
+    }
+
     private boolean checkConditions(Conditions conditions, Player player) {
         if (conditions == null) {
             return true;
@@ -102,693 +356,30 @@ public class Game {
 
         Object requiredItemsObj = conditions.getRequiresItem();
 
+        if (requiredItemsObj == null) {
+            return true;
+        }
+
         if (requiredItemsObj instanceof String) {
             String requiredItemName = (String) requiredItemsObj;
             if (player.findItemInventory(requiredItemName).isEmpty()) {
-                System.out.println("[Debug Cond] Failed: Missing required item '" + requiredItemName + "'"); // Debug
+                if (conditions.getFailMessage() != null) {
+                    System.out.println(conditions.getFailMessage());
+                }
                 return false;
             }
-            System.out.println("[Debug Cond] Passed: Found required item '" + requiredItemName + "'"); // Debug
         } else if (requiredItemsObj instanceof List) {
-            @SuppressWarnings("unchecked") // Safe cast after instanceof check
-            List<String> requiredItemNames = (List<String>) requiredItemsObj;
-
-            if (requiredItemNames.isEmpty()) {
-                System.out.println("[Debug Cond] Passed: requiresItem list is empty.");
-                return true;
-            }
-
-            for (String requiredItemName : requiredItemNames) {
-                if (player.findItemInventory(requiredItemName).isEmpty()) {
-                    System.out.println(
-                            "[Debug Cond] Failed: Missing required item '" + requiredItemName + "' from list."); // Debug
+            @SuppressWarnings("unchecked")
+            List<String> requiredItems = (List<String>) requiredItemsObj;
+            for (String itemName : requiredItems) {
+                if (player.findItemInventory(itemName).isEmpty()) {
+                    if (conditions.getFailMessage() != null) {
+                        System.out.println(conditions.getFailMessage());
+                    }
                     return false;
                 }
             }
-            System.out.println("[Debug Cond] Passed: Found all items in requiresItem list."); // Debug
-        } else if (requiredItemsObj != null) {
-            System.err
-                    .println("[WARN Cond] Unexpected type for requiresItem: " + requiredItemsObj.getClass().getName());
-            return false;
         }
         return true;
-    }
-
-    private void displayRoomInfo() {
-        Room currentRoom = getCurrentRoom();
-        if (currentRoom == null) {
-            System.out.println("You seem to be floating in the void...");
-            return;
-        }
-
-        System.out.println("\n--------------------");
-        System.out.println(currentRoom.getName());
-        System.out.println("--------------------");
-
-        boolean descriptionDisplayed = false;
-        List<ConditionalDescription> conditionals = currentRoom.getConditionalDescriptions();
-
-        if (conditionals != null && !conditionals.isEmpty()) {
-            for (ConditionalDescription conditional : conditionals) {
-                if (conditional.getConditions() != null && conditional.getDescription() != null) {
-                    if (checkConditions(conditional.getConditions(), player)) {
-                        System.out.println(conditional.getDescription());
-                        descriptionDisplayed = true;
-                        System.out.println("[Debug Desc] Displayed conditional description.");
-                        break;
-                    } else {
-                        System.out.println("[Debug Desc] Conditions failed for a conditional description."); // Debug
-                    }
-                } else {
-                    System.err.println(
-                            "[WARN Desc] Conditional description entry is missing conditions or description text in room '"
-                                    + currentRoom.getName() + "'.");
-                }
-            }
-        }
-
-        if (!descriptionDisplayed) {
-            System.out.println(currentRoom.getDescription());
-            System.out.println("[Debug Desc] Displayed default description.");
-        }
-
-        List<Item> itemsInRoom = currentRoom.getItems();
-        if (!itemsInRoom.isEmpty()) {
-            System.out.println("\nYou see here:");
-            for (Item item : itemsInRoom) {
-                System.out.println("- " + item.getName());
-            }
-        }
-
-        Map<String, ExitData> exits = currentRoom.getExit();
-        if (!exits.isEmpty()) {
-            System.out.println("\nObvious exits:");
-            String exitDirections = String.join(", ", exits.keySet());
-            System.out.println("- " + exitDirections);
-        } else {
-            System.out.println("\nThere are no obvious exits.");
-        }
-        System.out.println("--------------------");
-    }
-
-    public Room getRoom(String roomName) {
-        if (this.rooms == null) {
-            System.err.println(
-                    "Warning: Attempted to getRoom('" + roomName + "') but the game rooms map is not initialized.");
-            return null;
-        }
-        return this.rooms.get(roomName);
-    }
-
-    public Room getCurrentRoom() {
-        if (this.player == null) {
-            System.err.println("Warning: Attempted to getCurrentRoom but the player object is not initialized.");
-            return null;
-        }
-        String currentRoomName = this.player.getCurrentRoomName();
-        if (currentRoomName == null) {
-            System.err.println("Warning: Attempted to getCurrentRoom but the player's current room name is null.");
-            return null;
-        }
-        return getRoom(currentRoomName);
-    }
-
-    public void processCommand(String[] commandParts) {
-        if (commandParts == null || commandParts.length == 0) {
-            System.out.println("Huh? Please enter a command.");
-            return;
-        }
-
-        if (allGameItems == null) {
-            System.err.println(
-                    "[Game.processCommand] CRITICAL ERROR: Cannot process commands. Game item definitions not loaded.");
-            return;
-        }
-
-        if (player == null && !commandParts[0].equals("load") && !commandParts[0].equals("quit")) {
-            System.err.println("[Game.processCommand] CRITICAL ERROR: Player not initialized. Cannot process command: "
-                    + commandParts[0]);
-
-            return;
-        }
-
-        String commandVerb = commandParts[0];
-        System.out.println("[Game.processCommand] Processing verb: '" + commandVerb + "'");
-
-        switch (commandVerb) {
-            case "go":
-                if (commandParts.length < 2)
-                    System.out.println("Go where? Please specify a direction (e.g., 'go north').");
-                else {
-                    String direction = commandParts[1];
-                    System.out.println("[Game.processCommand] Extracted direction: '" + direction + "'");
-
-                    Room currentRoom = getCurrentRoom();
-
-                    if (currentRoom == null) {
-                        System.err.println(
-                                "[Game.processCommand] CRITICAL ERROR: Cannot determine current location to process 'go' command.");
-                        break;
-                    }
-                    System.out.println("[Game.processCommand] Current room is: '" + currentRoom.getName() + "'");
-
-                    Map<String, String> exits = currentRoom.getExits();
-                    Map<String, ExitData> exitsMap = currentRoom.getExit();
-                    ExitData exitData = exitsMap.get(direction);
-
-                    if (exitData == null) {
-                        System.err.println("[Game.processCommand] Error: Room '" + currentRoom.getName()
-                                + "' has a null exits map!");
-                        System.out.println("There seem to be no exit from here.");
-                        break;
-                    }
-
-                    Conditions conditions = exitData.getConditions();
-                    boolean conditionsMet = checkConditions(conditions, player);
-
-                    if (!conditionsMet) {
-                        String failMessage = (conditions != null) ? conditions.getFailMessage() : null;
-                        if (failMessage != null && !failMessage.isBlank()) {
-                            System.out.println(failMessage);
-                        } else {
-                            System.out.println("Something prevents you from going " + direction + ".");
-                        }
-                        break;
-                    }
-
-                    if (exits.containsKey(direction)) {
-                        System.out.println("[Game.processCommand] Valid exit direction '" + direction + "' found.");
-
-                        String nextRoomName = exits.get(direction);
-
-                        if (nextRoomName == null || nextRoomName.trim().isEmpty()) {
-                            System.err.println("[Game.processCommand] ERROR: Exit '" + direction + "' in room '"
-                                    + currentRoom.getName()
-                                    + "' leads to an invalid room name (null or empty). Check JSON data.");
-                            System.out.println("Hmm, the way " + direction + " seems blocked or leads nowhere.");
-                            break;
-                        }
-
-                        System.out.println("[Debug] Next room name retrieved: '" + nextRoomName + "'");
-
-                        player.setCurrentRoomName(nextRoomName);
-
-                        System.out.println("[Debug] Player location updated to: '" + player.getCurrentRoomName() + "'");
-
-                        System.out.println("You move " + direction + ".");
-
-                    } else {
-                        System.out.println("You can't go " + direction + " from here.");
-
-                    }
-                }
-                break;
-            case "look":
-                System.out.println("You look around");
-                displayRoomInfo();
-                break;
-            case "inventory":
-            case "inv":
-                List<Item> inventory = player.getInventory();
-
-                if (inventory == null || inventory.isEmpty()) {
-                    System.out.println("Your inventory is empty.");
-                } else {
-                    System.out.println("You are carrying: ");
-                    for (Item item : inventory) {
-                        System.out.println("-" + item.getName());
-                    }
-                }
-                break;
-            case "take":
-                if (commandParts.length < 2) {
-                    System.out.println("Take what? Please specify an item (e.g., 'take key').");
-                    break;
-                } else {
-
-                    String targetItemName = String.join(" ", Arrays.copyOfRange(commandParts, 1, commandParts.length));
-                    System.out.println("[Debug] Trying to take item: '" + targetItemName + "'");
-
-                    Room currentRoom = getCurrentRoom();
-                    if (currentRoom == null) {
-                        System.err.println(
-                                "[Game.processCommand] CRITICAL ERROR: Cannot determine current location to take item.");
-                        break;
-                    }
-
-                    List<Item> itemInRoom = currentRoom.getItems();
-                    if (itemInRoom == null) {
-                        System.err.println(
-                                "[Game.processCommand] ERROR: Room '" + currentRoom.getName()
-                                        + "' has a null items list!");
-                        System.out.println("There appears to be nothing to take here.");
-                        break;
-                    }
-
-                    Item itemToTake = null;
-                    boolean itemFound = false;
-
-                    Iterator<Item> iterator = itemInRoom.iterator();
-                    while (iterator.hasNext()) {
-                        Item roomItem = iterator.next();
-
-                        if (roomItem.getName().equalsIgnoreCase(targetItemName)) {
-                            itemToTake = roomItem;
-                            itemFound = true;
-
-                            iterator.remove();
-                            System.out.println("[Debug] Removed '" + itemToTake.getName() + "' from room '"
-                                    + currentRoom.getName() + "'.");
-                            break;
-                        }
-                    }
-                    if (itemFound && itemToTake != null) {
-                        player.takeItem(itemToTake);
-                        System.out.println("[Debug] Added '" + itemToTake.getName() + "' to player inventory.");
-
-                        System.out.println("You take the " + itemToTake.getName() + ".");
-                    } else {
-                        System.out.println("There is no '" + targetItemName + "' here to take.");
-                    }
-                }
-                break;
-            case "examine":
-            case "x":
-                if (commandParts.length < 2) {
-                    System.out.println("Examine what? Please specify an item (e.g., 'examine key')");
-                    break;
-                }
-
-                String targetExamineItemName = String.join(" ",
-                        Arrays.copyOfRange(commandParts, 1, commandParts.length));
-                System.out.println("[Debug] Player wants to examine: '" + targetExamineItemName + "'");
-
-                boolean itemExamined = false;
-
-                List<Item> playersInventory = player.getInventory(); // Rename inventory to playersInventory
-                if (playersInventory != null && !playersInventory.isEmpty()) {
-                    for (Item item : playersInventory) {
-                        if (item.getName().equalsIgnoreCase(targetExamineItemName)) {
-                            System.out.println(item.getDescription());
-                            itemExamined = true;
-                            break;
-                        }
-                    }
-                }
-                if (!itemExamined) {
-                    Room currentRoom = getCurrentRoom();
-                    if (currentRoom != null) {
-                        List<Item> itemsInRoom = currentRoom.getItems();
-                        if (itemsInRoom != null && !itemsInRoom.isEmpty()) {
-                            for (Item item : itemsInRoom) {
-                                if (item.getName().equalsIgnoreCase(targetExamineItemName)) {
-                                    System.out.println(item.getDescription());
-                                    itemExamined = true;
-                                    break;
-                                }
-                            }
-                        }
-                    } else {
-                        System.err.println(
-                                "[Game.processCommand] ERROR: Cannot examine room items, current room is null.");
-                        itemExamined = true;
-                    }
-                }
-                if (!itemExamined) {
-                    System.out.println(
-                            "You don't see any '" + targetExamineItemName + "' here or in your inventory to examine.");
-                }
-                break;
-            case "save":
-                System.out.println("Attempting to save game state...");
-
-                String playerLocationName = player.getCurrentRoomName();
-                if (playerLocationName == null) {
-                    System.err.println("[Game.processCommand] ERROR: Cannot save game. Player location is unknown.");
-                    break;
-                }
-                System.out.println("[Debug] Saving player location: " + playerLocationName);
-
-                List<String> inventoryItemNames = new ArrayList<>();
-                List<Item> playerInventory = player.getInventory();
-                if (playerInventory != null) {
-                    inventoryItemNames = playerInventory.stream().map(Item::getName).collect(Collectors.toList());
-                }
-                System.out.println("[Debug] Saving player inventory: " + inventoryItemNames);
-
-                Map<String, List<String>> currentRoomItems = new HashMap<>();
-
-                for (Map.Entry<String, Room> entry : rooms.entrySet()) {
-                    String roomName = entry.getKey();
-                    Room room = entry.getValue();
-                    List<String> itemNamesInRoom = new ArrayList<>();
-
-                    if (room != null && room.getItems() != null) {
-                        itemNamesInRoom = room.getItems().stream().map(Item::getName).collect(Collectors.toList());
-                    } else if (room == null) {
-                        System.err.println(
-                                "[Game.processCommand] WARNING: Skipping null room object during save for key: "
-                                        + roomName);
-                        continue;
-                    }
-                    currentRoomItems.put(roomName, itemNamesInRoom);
-                }
-
-                System.out.println("Data gathered for saving.");
-
-                SaveState saveState = new SaveState(playerLocationName, inventoryItemNames, currentRoomItems);
-
-                Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
-                try (FileWriter writer = new FileWriter(SAVE_FILE_NAME)) {
-                    gson.toJson(saveState, writer);
-                    System.out.println("Game saved successfully to " + SAVE_FILE_NAME + ".");
-
-                } catch (IOException e) {
-                    System.err.println("ERROR: Could not save game state to file '" + SAVE_FILE_NAME + "'.");
-                    e.printStackTrace();
-                    System.out.println("Failed to save game. Please check permissions or disk space.");
-                } catch (Exception e) {
-                    System.err.println("ERROR: An unexpected error occurred while saving the game.");
-                    e.printStackTrace();
-                    System.out.println("Failed to save game.");
-                }
-
-                break;
-            case "use":
-                if (player == null || rooms == null || allGameItems == null) {
-                    System.err.println("[Game.processCommand] ERROR: Cannot execute '" + commandVerb
-                            + "'. Game not fully initialized or loaded.");
-                    System.out.println("The game needs to be initialized or loaded first.");
-                    break;
-                } else if (commandVerb.equals("use")) {
-                    String itemName = null;
-                    String targetName = null;
-                    int separatorIndex = -1;
-
-                    for (int i = 1; i < commandParts.length - 1; i++) {
-                        if (commandParts[i].equalsIgnoreCase("on")) {
-                            separatorIndex = i;
-                            break;
-                        }
-                    }
-
-                    if (separatorIndex == -1 || separatorIndex == 1 || separatorIndex == commandParts.length - 1) {
-                        System.out.println("How do you want to use that? Try 'use <item> on <target>'.");
-                        break;
-                    }
-                    itemName = String.join(" ", Arrays.copyOfRange(commandParts, 1, separatorIndex));
-                    targetName = String.join(" ",
-                            Arrays.copyOfRange(commandParts, separatorIndex + 1, commandParts.length));
-
-                    System.out.println("[Debug Use] Item: '" + itemName + "', Target: '" + targetName + "'");
-
-                    Optional<Item> itemToUseOpt = player.findItemInventory(itemName);
-                    if (itemToUseOpt.isEmpty()) {
-                        System.out.println("You don't have a '" + itemName + "'.");
-                        break;
-                    }
-                    Item itemToUse = itemToUseOpt.get();
-                    Usability usability = itemToUse.getUsability();
-                    if (usability == null) {
-                        System.out.println(
-                                "You can't figure out how to use the " + itemToUse.getName() + " in that way.");
-                        break;
-                    }
-                    String requiredTarget = usability.getTarget();
-                    if (requiredTarget == null || !targetName.equalsIgnoreCase(requiredTarget)) {
-                        if (requiredTarget != null) {
-                            System.out.println("You can't use the " + itemToUse.getName() + " on the " + targetName
-                                    + ". Maybe try using it on the " + requiredTarget + "?");
-                        } else {
-                            System.out.println(
-                                    "The " + itemToUse.getName() + " isn't meant to be used on things directly.");
-                        }
-                        break;
-                    }
-                    boolean targetPresent = false;
-                    Room currentRoom = getCurrentRoom();
-
-                    if (targetName.equalsIgnoreCase("self")) {
-                    } else if (currentRoom != null) {
-                        targetPresent = currentRoom.findItemByName(targetName).isPresent();
-                    }
-
-                    if (!targetPresent) {
-                        System.out.println(
-                                "You don't see a '" + targetName + "' here to use the " + itemToUse.getName() + " on.");
-                        break;
-                    }
-
-                    System.out.println("[Debug Use] All checks passed for using '" + itemToUse.getName() + "' on '"
-                            + targetName + "'");
-
-                    if (usability.getEffectDescription() != null && !usability.getEffectDescription().isBlank()) {
-                        System.out.println(usability.getEffectDescription());
-                    } else {
-                        System.out.println("You use the " + itemToUse.getName() + " on the " + targetName + ".");
-                    }
-
-                    Room currentRoomName = getCurrentRoom();
-
-                    String targetToRemove = usability.getRemovesTarget();
-                    if (targetToRemove != null && !targetToRemove.isBlank() && currentRoom != null) {
-                        Item removed = currentRoomName.removeItem(targetToRemove);
-                        if (removed != null) {
-                            System.out.println("The " + removed.getName() + " disappears.");
-                        } else {
-                            System.err.println("[WARN] Use Effect: Tried to remove target '" + targetToRemove
-                                    + "' but it wasn't found as an item in the room.");
-                        }
-                    }
-                    String targetToAdd = usability.getAddsTarget();
-                    if (targetToAdd != null && !targetToAdd.isBlank() && currentRoom != null) {
-                        Item itemDefinitionToAdd = allGameItems.get(targetToAdd.toLowerCase());
-                        if (itemDefinitionToAdd != null) {
-                            currentRoom.addItem(itemDefinitionToAdd);
-                            System.out.println("A " + itemDefinitionToAdd.getName() + " appears!");
-                        } else {
-                            System.err.println("[WARN] Use Effect: Tried to add target '" + targetToAdd
-                                    + "' but it wasn't defined in allGameItems.");
-                        }
-                    }
-
-                    String itemToAddToInventory = usability.getAddsItemToInventory();
-                    if (itemToAddToInventory != null && !itemToAddToInventory.isBlank()) {
-                        Item itemDefinitionForInv = allGameItems.get(itemToAddToInventory.toLowerCase());
-                        if (itemDefinitionForInv != null) {
-                            player.takeItem(itemDefinitionForInv);
-                            System.out.println("You acquire a " + itemDefinitionForInv.getName() + ".");
-                        } else {
-                            System.err.println("[WARN] Use Effect: Tried to add item '" + itemToAddToInventory
-                                    + "' to inventory but it wasn't defined in allGameItems.");
-                        }
-                    }
-
-                    String newDescription = usability.getChangesRoomDescriptionTo();
-                    if (newDescription != null && !newDescription.isBlank() && currentRoom != null) {
-                        currentRoom.setDescription(newDescription);
-                        System.out.println("The appearance of the room seems to change.");
-                    }
-
-                    String exitToUnlock = usability.getUnlocksExit();
-                    if (exitToUnlock != null && !exitToUnlock.isBlank()) {
-                        System.out.println("[INFO] Use Effect: Unlocking exit '" + exitToUnlock
-                                + "' is not fully implemented yet.");
-                    }
-
-                    ExitModification exitMod = usability.getModifiesExit();
-                    if (exitMod != null && currentRoom != null) {
-                        String directionToModify = exitMod.getDirection();
-                        if (directionToModify != null && !directionToModify.isBlank()) {
-                            ExitData exitToModify = currentRoom.getExit().get(directionToModify.toLowerCase());
-
-                            if (exitToModify != null) {
-                                System.out.println(
-                                        "[Debug Exit Mod] Found exit data for direction: " + directionToModify); // Debug
-                                Conditions exitConditions = exitToModify.getConditions();
-
-                                if (exitConditions == null) {
-                                    System.err.println("[WARN Exit Mod] Cannot modify exit '" + directionToModify
-                                            + "': No existing Conditions object found.");
-                                } else {
-                                    boolean modified = false;
-                                    if (exitMod.isClearRequiresItem()) {
-                                        if (exitConditions.getRequiresItem() != null) {
-                                            exitConditions.setRequiresItem(null);
-                                            System.out.println("The way " + directionToModify + " seems to unlock.");
-                                            modified = true;
-                                        } else {
-                                            System.out.println(
-                                                    "[Debug Exit Mod] Request to clear requiresItem, but none was set for "
-                                                            + directionToModify);
-                                        }
-                                    }
-                                    String newFailMessage = exitMod.getSetFailMessage();
-                                    if (newFailMessage != null) {
-                                        exitConditions.setFailMessage(newFailMessage);
-                                        System.out.println(
-                                                "Your perception of the way " + directionToModify + " changes.");
-                                        modified = true;
-                                    }
-
-                                    if (!modified) {
-                                        System.out
-                                                .println("[Debug Exit Mod] No effective modifications applied to exit "
-                                                        + directionToModify);
-                                    }
-                                }
-                            } else {
-                                System.err.println("[WARN Exit Mod] Cannot modify exit: Direction '" + directionToModify
-                                        + "' not found in current room '" + currentRoom.getName() + "'.");
-                            }
-                        } else {
-                            System.err.println("[WARN Exit Mod] Invalid modification data: Direction is missing.");
-                        }
-                    }
-
-                    if (usability.isConsumesItem()) {
-                        System.out.println("[Debug Use] Consuming item: " + itemToUse.getName());
-                        boolean removed = player.removeItem(itemToUse.getName());
-                        if (removed) {
-                            System.out.println("The " + itemToUse.getName() + " is used up.");
-                        } else {
-                            System.err.println("[WARN] Use Effect: Tried to consume item '" + itemToUse.getName()
-                                    + "' but it couldn't be removed from inventory.");
-                        }
-                    }
-                }
-                break;
-            case "load":
-                System.out.println("Attempting to load game state from " + SAVE_FILE_NAME + "...");
-
-                SaveState loadedState = null;
-                Gson gson1 = new Gson(); // Named gson to gson1
-
-                try (FileReader reader = new FileReader(SAVE_FILE_NAME)) {
-                    loadedState = gson1.fromJson(reader, SaveState.class);
-                    System.out.println("[Debug] Save file read and parsed successfully.");
-                }
-
-                catch (FileNotFoundException e) {
-                    System.out.println("No save file found ('" + SAVE_FILE_NAME + "'). Cannot load progress.");
-                    break;
-                }
-
-                catch (IOException e) {
-                    System.err.println("ERROR: Could not read save file '" + SAVE_FILE_NAME + "'.");
-                    e.printStackTrace();
-                    System.out.println("Failed to load game due to a file reading error.");
-                    break;
-                }
-
-                catch (JsonSyntaxException e) {
-                    System.err.println("ERROR: Save file '" + SAVE_FILE_NAME + "' is corrupted or has invalid format.");
-                    e.printStackTrace();
-                    System.out.println("Failed to load game. The save file might be damaged.");
-                    break;
-                }
-
-                catch (Exception e) {
-                    System.err.println("ERROR: An unexpected error occurred while loading the game.");
-                    e.printStackTrace();
-                    System.out.println("Failed to load game.");
-                    break;
-                }
-
-                if (loadedState != null) {
-                    System.out.println("[Debug] Save file loaded and parsed successfully.");
-
-                    if (player == null) {
-                        player = new Player();
-                        System.out.println("[Debug] Player object was null, created a new one for loading.");
-
-                    }
-
-                    if (rooms == null) {
-                        System.err.println("ERROR: Cannot apply loaded state, game rooms are not initialized.");
-                        System.out.println("Load failed. Game data might be missing.");
-                        break;
-                    }
-
-                    String loadedLocation = loadedState.getPlayerLocation();
-                    if (loadedLocation != null && rooms.containsKey(loadedLocation)) {
-                        player.setCurrentRoomName(loadedLocation);
-                        System.out.println("[Debug] Player location set to: " + loadedLocation);
-
-                    } else {
-                        System.err.println("WARNING: Loaded location '" + loadedLocation
-                                + "' is invalid or not found in current game rooms. Player location not updated.");
-                    }
-
-                    List<String> loadedInvNames = loadedState.getPlayerInventory();
-                    if (loadedInvNames != null) {
-                        player.getInventory().clear();
-                        System.out.println("[Debug] Player inventory cleared.");
-                        for (String itemName : loadedInvNames) {
-                            Item item = allGameItems.get(itemName);
-                            if (item != null) {
-                                player.takeItem(item);
-                                System.out.println("[Debug] Added '" + itemName + "' to player inventory.");
-
-                            } else {
-                                System.err.println(
-                                        "WARNING: Unknown item '" + itemName + "' found in saved inventory. Skipping.");
-                            }
-                        }
-                    } else {
-                        System.err.println(
-                                "WARNING: Saved inventory data is missing. Player inventory may be incorrect.");
-                        player.getInventory().clear();
-                    }
-
-                    Map<String, List<String>> loadedRoomStates = loadedState.getRoomItemStates();
-                    if (loadedRoomStates != null) {
-                        for (Map.Entry<String, Room> roomEntry : rooms.entrySet()) {
-                            String roomName = roomEntry.getKey();
-                            Room room = roomEntry.getValue();
-
-                            if (room == null)
-                                continue;
-
-                            List<String> itemNamesForThisRoom = loadedRoomStates.get(roomName);
-
-                            room.getItems().clear();
-                            System.out.println("[Debug] Cleared items for room: " + roomName);
-
-                            if (itemNamesForThisRoom != null) {
-                                for (String itemName : itemNamesForThisRoom) {
-                                    Item item = allGameItems.get(itemName);
-                                    if (item != null) {
-                                        room.addItem(item);
-                                        System.out.println(
-                                                "[Debug] Added '" + itemName + "' back to room '" + roomName + "'.");
-                                    } else {
-                                        System.err.println("WARNING: Unknown item '" + itemName
-                                                + "' found in saved state for room '" + roomName + "'. Skipping.");
-                                    }
-                                }
-                            } else {
-                                System.out.println("[Debug] No saved item state found for room '" + roomName
-                                        + "'. Room remains empty.");
-                            }
-                        }
-                    } else {
-                        System.err.println(
-                                "WARNING: Saved room item state data is missing. Room contents may be incorrect.");
-                    }
-
-                    System.out.println("Game loaded successfully!");
-
-                } else {
-                    System.out.println("Failed to load game state. Loaded data was null.");
-                }
-                break;
-            default:
-                System.out.println("Sorry, I don't understand the command '" + commandVerb + "'.");
-                System.out.println("Try one of these: go, look, take, inventory (inv), examine (x), save, load, quit");
-                break;
-        }
-        System.out.println();
     }
 }

@@ -14,18 +14,9 @@ public class SaveState {
         this.roomItemStates = roomItemStates;
     }
 
-    public String getPlayerLocation() {
-        return playerLocation;
-    }
+    public String getPlayerLocation() { return playerLocation; }
+    public List<String> getPlayerInventory() { return playerInventory; }
+    public Map<String, List<String>> getRoomItemStates() { return roomItemStates; }
 
-    public List<String> getPlayerInventory() {
-        return playerInventory;
-    }
-
-    public Map<String, List<String>> getRoomItemStates() {
-        return roomItemStates;
-    }
-
-    public SaveState() {
-    }
+    public SaveState() {}
 }

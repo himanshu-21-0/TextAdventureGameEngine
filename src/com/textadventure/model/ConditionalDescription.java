@@ -12,6 +12,5 @@ public class ConditionalDescription {
         return description;
     }
 
-    public ConditionalDescription() {
-    }
+    public ConditionalDescription() {}
 }

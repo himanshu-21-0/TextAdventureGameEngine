@@ -12,6 +12,13 @@ public class ExitData {
         return conditions;
     }
 
-    public ExitData() {
+    public void setTargetRoom(String targetRoom) {
+        this.targetRoom = targetRoom;
     }
+
+    public void setConditions(Conditions conditions) {
+        this.conditions = conditions;
+    }
+
+    public ExitData() {}
 }

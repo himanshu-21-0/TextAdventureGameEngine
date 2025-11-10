@@ -38,6 +38,10 @@ public class Item {
         return usability;
     }
 
+    public void setUsability(Usability usability) {
+        this.usability = usability;
+    }
+
     public static class Usability {
         private String target;
         private String effectDescription;
@@ -49,44 +53,16 @@ public class Item {
         private String addsItemToInventory;
         private ExitModification modifiesExit;
 
-        public String getTarget() {
-            return target;
-        }
-
-        public String getEffectDescription() {
-            return effectDescription;
-        }
-
-        public ExitModification getModifiesExit() {
-            return modifiesExit;
-        }
-
-        public boolean isConsumesItem() {
-            return consumesItem;
-        }
-
-        public String getUnlocksExit() {
-            return unlocksExit;
-        }
-
-        public String getRemovesTarget() {
-            return removesTarget;
-        }
-
-        public String getAddsTarget() {
-            return addsTarget;
-        }
-
-        public String getChangesRoomDescriptionTo() {
-            return changesRoomDescriptionTo;
-        }
-
-        public String getAddsItemToInventory() {
-            return addsItemToInventory;
-        }
+        public String getTarget() { return target; }
+        public String getEffectDescription() { return effectDescription; }
+        public ExitModification getModifiesExit() { return modifiesExit; }
+        public boolean isConsumesItem() { return consumesItem; }
+        public String getUnlocksExit() { return unlocksExit; }
+        public String getRemovesTarget() { return removesTarget; }
+        public String getAddsTarget() { return addsTarget; }
+        public String getChangesRoomDescriptionTo() { return changesRoomDescriptionTo; }
+        public String getAddsItemToInventory() { return addsItemToInventory; }
 
         public Usability() {}
-
     }
-
 }
