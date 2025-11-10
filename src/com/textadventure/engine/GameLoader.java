@@ -29,7 +29,7 @@ public class GameLoader {
         Map<String, String> exits;
         List<String> items;
         Map<String, ExitDataJson> exitData;
-        List<ConditionalDescription> conditionalDescriptions;
+        // List<ConditionalDescription> conditionalDescriptions;
     }
 
     private static class GameData {
