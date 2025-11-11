@@ -1,12 +1,12 @@
 {
-  "playerLocation": "Rusty Boiler Room",
+  "playerLocation": "East Corridor",
   "playerInventory": [
     "Sledgehammer",
     "Rubble",
     "Maintenance Log",
     "Key Card",
-    "Wire Cutters",
     "Crank",
+    "Wire Cutters",
     "Crank Socket"
   ],
   "roomItemStates": {
