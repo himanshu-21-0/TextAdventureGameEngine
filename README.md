@@ -307,7 +307,7 @@ MIT License – Free to use, modify, distribute. See [LICENSE](LICENSE) for deta
 ![Himanshu Singh](https://avatars.githubusercontent.com/u/188773709?s=400&u=6015f332d2cc8673ae1f31fda674eb7d1d89a559&v=4)  
 **Himanshu Singh** – *Creator & Maintainer*  
 
-[![GitHub](https://img.shields.io/badge/GitHub-himanshu--21--0-blue?logo=github)](https://github.com/himanshu-21-0) 
+[![GitHub](https://img.shields.io/badge/GitHub-himanshux19-blue?logo=github)](https://github.com/himanshux19) 
 
 ##
 
